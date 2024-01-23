@@ -1,16 +1,14 @@
 import {
   HttpStatus,
   Injectable,
-  Res,
   Inject,
   HttpException,
-  Param,
 } from '@nestjs/common';
-import { InsertEvent, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../../models/users/user.entity';
-import { UserInterface } from '../../interfaces/user.interfaces';
 import { provider } from '../../constant/provider';
 import { Request } from 'express';
+import { hashPassword, comparePass } from "../../constant/hashing";
 
 @Injectable()
 export class UserService {
@@ -25,7 +23,7 @@ export class UserService {
    * @returns 
    */
   async postUser(req: Request): Promise<object> {
-    const { body } = req;
+    const { body, body: { password } } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
         where: { email: body.email },
@@ -39,6 +37,7 @@ export class UserService {
           HttpStatus.CONFLICT,
         );
       } else {
+        body.password = await hashPassword(password)
         await this.userRepository.insert(body);
         return { status: true, message: 'User created successfully' };
       }
