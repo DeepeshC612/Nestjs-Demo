@@ -4,12 +4,13 @@ import {
   HttpStatus,
   Post,
   Req,
-  Res,
   HttpException,
-  HttpCode
+  HttpCode,
+  Param,
+  Query
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { Request, Response } from 'express';
+import { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -22,15 +23,21 @@ export class UserController {
       return await this.userService.postUser(req);
     } catch (error) {
       throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Internal server error',
-          errors: error,
-        },
+        error?.cause?.response ? error?.cause?.response : error?.response,
         HttpStatus.BAD_REQUEST,
-        {
-          cause: error,
-        },
+      );
+    }
+  }
+
+  @Get('')
+  @HttpCode(200)
+  async getUser(@Query('email') email: string) {
+    try {
+      return await this.userService.getUser(email);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ? error?.cause?.response : error?.response,
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
