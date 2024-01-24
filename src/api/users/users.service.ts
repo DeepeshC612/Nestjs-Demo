@@ -1,14 +1,9 @@
-import {
-  HttpStatus,
-  Injectable,
-  Inject,
-  HttpException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../../models/users/user.entity';
 import { provider } from '../../constant/provider';
 import { Request } from 'express';
-import { hashPassword, comparePass } from "../../constant/hashing";
+import { hashPassword, comparePass } from '../../constant/hashing';
 
 @Injectable()
 export class UserService {
@@ -19,11 +14,14 @@ export class UserService {
 
   /**
    * User signup
-   * @req request 
-   * @returns 
+   * @req request
+   * @returns
    */
   async postUser(req: Request): Promise<object> {
-    const { body, body: { password } } = req;
+    const {
+      body,
+      body: { password },
+    } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
         where: { email: body.email },
@@ -37,7 +35,7 @@ export class UserService {
           HttpStatus.CONFLICT,
         );
       } else {
-        body.password = await hashPassword(password)
+        body.password = await hashPassword(password);
         await this.userRepository.insert(body);
         return { status: true, message: 'User created successfully' };
       }
@@ -56,24 +54,38 @@ export class UserService {
   }
 
   /**
-   * Get user details
-   * @param email 
-   * @returns 
+   * User Login
+   * @req request
+   * @returns
    */
-  async getUser(email: string): Promise<User> {
+  async postUserLogin(req: Request): Promise<object> {
+    const {
+      body,
+    } = req;
     try {
-      const user: User = await this.userRepository.findOne({
-        where: { email: email },
+      const isExists: User = await this.userRepository.findOne({
+        where: { email: body.email },
       });
-      if (user) {
-        return user;
+      if (isExists) {
+        const passCheck = await comparePass(body.password, isExists?.password)
+        if(!passCheck) {
+          throw new HttpException(
+            {
+              status: false,
+              error: 'Invalid credentials',
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
+        }
+        delete isExists.password
+        return { status: true, data: isExists, message: 'Login success' }
       } else {
         throw new HttpException(
           {
             status: false,
             error: 'User not found',
           },
-          HttpStatus.NOT_FOUND,
+          HttpStatus.BAD_REQUEST,
         );
       }
     } catch (error) {
@@ -89,5 +101,38 @@ export class UserService {
       );
     }
   }
-  
+
+  /**
+   * Get user details
+   * @param email
+   * @returns
+   */
+  async getUser(email: string): Promise<User> {
+    try {
+      const user: User = await this.userRepository.findOne({
+        where: { email: email },
+      });
+      if (!user) {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'User not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return user;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
 }
