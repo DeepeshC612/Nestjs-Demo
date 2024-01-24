@@ -23,8 +23,8 @@ export class UserController {
       return await this.userService.postUser(req);
     } catch (error) {
       throw new HttpException(
-        error?.cause?.response ? error?.cause?.response : error?.response,
-        HttpStatus.BAD_REQUEST,
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
       );
     }
   }
@@ -36,8 +36,8 @@ export class UserController {
       return await this.userService.getUser(email);
     } catch (error) {
       throw new HttpException(
-        error?.cause?.response ? error?.cause?.response : error?.response,
-        HttpStatus.BAD_REQUEST,
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
       );
     }
   }
