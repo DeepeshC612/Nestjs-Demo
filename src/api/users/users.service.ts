@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Or, Repository } from 'typeorm';
 import { User } from '../../models/users/user.entity';
 import { provider } from '../../constant/provider';
 import { hashPassword, comparePass } from '../../constant/hashing';
@@ -21,7 +21,9 @@ export class UserService {
     const { password } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
-        where: { email: req.email },
+        where: [
+          { email: req.email }, { phoneNum: req.phoneNum }
+        ],
       });
       if (isExists) {
         throw new HttpException(
@@ -56,7 +58,7 @@ export class UserService {
    * @returns
    */
   async postUserLogin(req: LoginUserDto): Promise<object> {
-   // const { body } = req;
+    // const { body } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
         where: { email: req.email },

@@ -1,19 +1,22 @@
-import { OmitType } from '@nestjs/mapped-types';
+import { OmitType, PickType } from '@nestjs/mapped-types';
 import { IsEmail, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @IsNotEmpty()
   password: string;
 
-  @IsNumber()
   @IsNotEmpty()
-  phoneNum: number;
+  phoneNum: string;
 
   @IsNotEmpty()
   name: string;
 }
 
-export class LoginUserDto extends OmitType(CreateUserDto, ['name', 'phoneNum'] as const) {}
+export class LoginUserDto extends OmitType(CreateUserDto, [
+  'name',
+  'phoneNum',
+] as const) {}

@@ -11,10 +11,10 @@ export class User {
   @Column({ length: 500 })
   email: string;
 
-  @Column()
+  @Column({ length: 500 })
   password: string;
 
-  @Column()
-  phoneNum: number;
+  @Column({ length: 20 })
+  phoneNum: string;
 
 }
