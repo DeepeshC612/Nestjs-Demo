@@ -28,18 +28,18 @@ export class UserController {
     }
   }
 
-  @Post('login')
-  @HttpCode(200)
-  async postUserLogin(@Body() req: LoginUserDto) {
-    try {
-      return await this.userService.postUserLogin(req);
-    } catch (error) {
-      throw new HttpException(
-        error?.cause?.response ?? error?.response,
-        error?.cause?.status ?? error?.response?.status,
-      );
-    }
-  }
+  // @Post('login')
+  // @HttpCode(200)
+  // async postUserLogin(@Body() req: LoginUserDto) {
+  //   try {
+  //     return await this.userService.postUserLogin(req);
+  //   } catch (error) {
+  //     throw new HttpException(
+  //       error?.cause?.response ?? error?.response,
+  //       error?.cause?.status ?? error?.response?.status,
+  //     );
+  //   }
+  // }
 
   @Get('')
   @HttpCode(200)
