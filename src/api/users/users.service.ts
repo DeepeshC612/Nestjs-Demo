@@ -2,8 +2,8 @@ import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../../models/users/user.entity';
 import { provider } from '../../constant/provider';
-import { Request } from 'express';
 import { hashPassword, comparePass } from '../../constant/hashing';
+import { CreateUserDto, LoginUserDto } from '../../validation/user.validation';
 
 @Injectable()
 export class UserService {
@@ -17,14 +17,11 @@ export class UserService {
    * @req request
    * @returns
    */
-  async postUser(req: Request): Promise<object> {
-    const {
-      body,
-      body: { password },
-    } = req;
+  async postUser(req: CreateUserDto): Promise<object> {
+    const { password } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
-        where: { email: body.email },
+        where: { email: req.email },
       });
       if (isExists) {
         throw new HttpException(
@@ -35,8 +32,8 @@ export class UserService {
           HttpStatus.CONFLICT,
         );
       } else {
-        body.password = await hashPassword(password);
-        await this.userRepository.insert(body);
+        req.password = await hashPassword(password);
+        await this.userRepository.insert(req);
         return { status: true, message: 'User created successfully' };
       }
     } catch (error) {
@@ -58,17 +55,15 @@ export class UserService {
    * @req request
    * @returns
    */
-  async postUserLogin(req: Request): Promise<object> {
-    const {
-      body,
-    } = req;
+  async postUserLogin(req: LoginUserDto): Promise<object> {
+   // const { body } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
-        where: { email: body.email },
+        where: { email: req.email },
       });
       if (isExists) {
-        const passCheck = await comparePass(body.password, isExists?.password)
-        if(!passCheck) {
+        const passCheck = await comparePass(req.password, isExists?.password);
+        if (!passCheck) {
           throw new HttpException(
             {
               status: false,
@@ -77,8 +72,8 @@ export class UserService {
             HttpStatus.UNAUTHORIZED,
           );
         }
-        delete isExists.password
-        return { status: true, data: isExists, message: 'Login success' }
+        delete isExists.password;
+        return { status: true, data: isExists, message: 'Login success' };
       } else {
         throw new HttpException(
           {

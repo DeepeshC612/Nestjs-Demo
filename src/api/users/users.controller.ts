@@ -7,10 +7,11 @@ import {
   HttpException,
   HttpCode,
   Param,
-  Query
+  Query,
+  Body
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { Request } from 'express';
+import { CreateUserDto, LoginUserDto } from '../../validation/user.validation'
 
 @Controller('user')
 export class UserController {
@@ -18,7 +19,7 @@ export class UserController {
 
   @Post('signup')
   @HttpCode(201)
-  async postUser(@Req() req: Request) {
+  async postUser(@Body() req: CreateUserDto) {
     try {
       return await this.userService.postUser(req);
     } catch (error) {
@@ -31,7 +32,7 @@ export class UserController {
 
   @Post('login')
   @HttpCode(200)
-  async postUserLogin(@Req() req: Request) {
+  async postUserLogin(@Body() req: LoginUserDto) {
     try {
       return await this.userService.postUserLogin(req);
     } catch (error) {
