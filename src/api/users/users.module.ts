@@ -3,6 +3,7 @@ import { UserController } from './users.controller';
 import { DataBaseModule } from '../../config/database.module';
 import { userProviders } from "./user.provider";
 import { UserService } from './users.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Module({
   imports: [DataBaseModule],

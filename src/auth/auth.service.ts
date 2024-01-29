@@ -13,7 +13,7 @@ export class AuthService {
   async signIn(
     email: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ access_token: string; data: object }> {
     const user = await this.usersService.findOneUser(email);
     const passCheck = await comparePass(pass, user?.password);
     if (!passCheck) {
@@ -25,8 +25,10 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
     }
-    const payload = { ...user }
+    const payload = { ...user };
+    delete user?.password;
     return {
+      data: user,
       access_token: await this.jwtService.signAsync(payload),
     };
   }
