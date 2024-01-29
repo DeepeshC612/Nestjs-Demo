@@ -1,8 +1,8 @@
 import { DataSource } from 'typeorm';
 import { getEnv } from '../constant/environment';
 import { provider } from '../constant/provider';
-import { User } from "../models/users/user.entity";
-
+import { User } from '../models/users/user.entity';
+import { Product } from "../models/products/product.entity";
 
 export const AppDataSource = [
   {
@@ -17,7 +17,7 @@ export const AppDataSource = [
         database: getEnv('db_name'),
         synchronize: true,
         logging: false,
-        entities: [User], 
+        entities: [User, Product],
         migrations: [],
         subscribers: [],
       });
