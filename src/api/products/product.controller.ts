@@ -48,9 +48,9 @@ import {
     @UseGuards(AuthGuard)
     @Delete(':id')
     @HttpCode(200)
-    async productDelete(@Param('id') id: number) {
+    async productDelete(@Req() req: Request) {
       try {
-        return await this.productService.productDelete(id);
+        return await this.productService.productDelete(req);
       } catch (error) {
         throw new HttpException(
           error?.cause?.response ?? error?.response,

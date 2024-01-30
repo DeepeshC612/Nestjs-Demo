@@ -93,7 +93,6 @@ export class ProductService {
         );
       }
     } catch (error) {
-      console.log('err', error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -111,26 +110,25 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async productDelete(id: number): Promise<object> {
+  async productDelete(req: any): Promise<object> {
     try {
       const product = await this.productRepository
         .createQueryBuilder()
         .delete()
-        .where('id = :id', { id: id })
+        .where('id = :id AND userId = :userId', { id: req?.params?.id, userId: req?.body?.user })
         .execute();
-      if (product) {
+      if (product.affected == 1) {
         return { status: true, data: {}, message: 'Product deleted successfully.' };
       } else {
         throw new HttpException(
           {
             status: false,
-            error: 'Products not found',
+            error: 'Products not found or can not deleted',
           },
           HttpStatus.BAD_REQUEST,
         );
       }
     } catch (error) {
-      console.log('err', error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
