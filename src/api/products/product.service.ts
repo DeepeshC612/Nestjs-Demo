@@ -1,8 +1,9 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { Or, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateProductDto } from 'src/validation/product.validation';
+import { join } from 'path';
 
 @Injectable()
 export class ProductService {
@@ -55,24 +56,31 @@ export class ProductService {
    */
   async productList(req: any): Promise<object> {
     try {
-      const {} = req.query;
-      const product = await this.productRepository.find({
-        relations: {
-          user: true,
-        },
-        where: {
-          user: {
-            id: req?.body?.user
-          },
-        },
-        select: {
-          user: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      });
+      const { limit, offset, sortBy, sortType, search } = req.query;
+      let orderBy = {};
+      if (sortBy) {
+        orderBy[`${sortBy}`] = sortType ?? 'ASC';
+      }
+      const product = await this.productRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.user', 'user')
+        .select([
+          'product',
+          'user.id AS userId',
+          'user.name AS userName',
+          'user.email AS userEmail',
+        ])
+        .where('user.id = :userId', { userId: req?.body?.user })
+        .andWhere(
+          search
+            ? '(product.productName LIKE :search OR product.description LIKE :search)'
+            : '1=1',
+          { search: `%${search}%` },
+        )
+        .limit(limit ?? 10)
+        .offset(offset ?? 0)
+        .orderBy(orderBy ?? {})
+        .getRawMany();
       if (product) {
         return { status: true, data: product, message: 'Product list.' };
       } else {
@@ -85,6 +93,7 @@ export class ProductService {
         );
       }
     } catch (error) {
+      console.log('err', error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
