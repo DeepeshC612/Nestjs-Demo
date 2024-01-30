@@ -15,7 +15,6 @@ export class AuthService {
     pass: string,
   ): Promise<{ access_token: string; data: object }> {
     const user = await this.usersService.findOneUser(email);
-    console.log("called", email)
     const passCheck = await comparePass(pass, user?.password);
     if (!passCheck) {
       throw new HttpException(

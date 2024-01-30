@@ -107,7 +107,6 @@ export class UserService {
         }
         return user;
       } catch (error) {
-      console.log("email", error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
