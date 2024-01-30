@@ -7,7 +7,9 @@ import {
     HttpCode,
     Query,
     Body,
-    UseGuards
+    UseGuards,
+    Delete,
+    Param
   } from '@nestjs/common';
   import { ProductService } from './product.service';
   import { AuthGuard } from "../../auth/auth.guard";
@@ -36,6 +38,19 @@ import {
     async productList(@Req() req: Request) {
       try {
         return await this.productService.productList(req);
+      } catch (error) {
+        throw new HttpException(
+          error?.cause?.response ?? error?.response,
+          error?.cause?.status ?? error?.response?.status,
+        );
+      }
+    }
+    @UseGuards(AuthGuard)
+    @Delete(':id')
+    @HttpCode(200)
+    async productDelete(@Param('id') id: number) {
+      try {
+        return await this.productService.productDelete(id);
       } catch (error) {
         throw new HttpException(
           error?.cause?.response ?? error?.response,

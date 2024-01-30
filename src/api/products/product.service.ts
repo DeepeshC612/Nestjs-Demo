@@ -106,4 +106,41 @@ export class ProductService {
       );
     }
   }
+  /**
+   * product delete api
+   * @req request
+   * @returns
+   */
+  async productDelete(id: number): Promise<object> {
+    try {
+      const product = await this.productRepository
+        .createQueryBuilder()
+        .delete()
+        .where('id = :id', { id: id })
+        .execute();
+      if (product) {
+        return { status: true, data: {}, message: 'Product deleted successfully.' };
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Products not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      console.log('err', error);
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
 }
