@@ -19,11 +19,8 @@ export class ProductService {
   async createProduct(req: any): Promise<object> {
     try {
       const isExists: Product = await this.productRepository.findOne({
-        where: [
-          { productName: req.productName }
-        ],
+        where: [{ productName: req.productName }],
       });
-      console.log(isExists)
       if (isExists) {
         throw new HttpException(
           {
@@ -33,7 +30,7 @@ export class ProductService {
           HttpStatus.CONFLICT,
         );
       } else {
-        req.user = req?.user?.id
+        // body.user = req?.user?.id;
         await this.productRepository.insert(req);
         return { status: true, message: 'Product added successfully' };
       }
@@ -51,4 +48,53 @@ export class ProductService {
     }
   }
 
+  /**
+   * product list
+   * @req request
+   * @returns
+   */
+  async productList(req: any): Promise<object> {
+    try {
+      const {} = req.query;
+      const product = await this.productRepository.find({
+        relations: {
+          user: true,
+        },
+        where: {
+          user: {
+            id: req?.body?.user
+          },
+        },
+        select: {
+          user: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      });
+      if (product) {
+        return { status: true, data: product, message: 'Product list.' };
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Products not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
 }

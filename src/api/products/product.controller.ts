@@ -29,5 +29,19 @@ import {
         );
       }
     }
+
+    @UseGuards(AuthGuard)
+    @Get('')
+    @HttpCode(200)
+    async productList(@Req() req: Request) {
+      try {
+        return await this.productService.productList(req);
+      } catch (error) {
+        throw new HttpException(
+          error?.cause?.response ?? error?.response,
+          error?.cause?.status ?? error?.response?.status,
+        );
+      }
+    }
   }
   

@@ -12,10 +12,10 @@ export class CreateProductDto {
   @IsNotEmpty()
   description: string;
 
-//   @IsNotEmpty()
-//   user: {
-//     id: number
-//   }
+  @IsNotEmpty()
+  user: {
+    id: number
+  }
 
 }
 
