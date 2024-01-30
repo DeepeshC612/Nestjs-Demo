@@ -4,11 +4,12 @@ import { User } from '../../models/users/user.entity';
 import { provider } from '../../constant/provider';
 import { hashPassword, comparePass } from '../../constant/hashing';
 import { CreateUserDto, LoginUserDto } from '../../validation/user.validation';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(provider.user)
+    @InjectRepository(User) // provider.user
     private userRepository: Repository<User>,
   ) {}
 
@@ -102,10 +103,11 @@ export class UserService {
             error: 'User not found',
           },
           HttpStatus.BAD_REQUEST,
-        );
-      }
-      return user;
-    } catch (error) {
+          );
+        }
+        return user;
+      } catch (error) {
+      console.log("email", error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,

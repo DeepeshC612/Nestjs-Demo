@@ -1,15 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { UserModule } from './api/users/users.module';
-import { DataBaseModule } from './config/database.module';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { AuthGuard } from './auth/auth.guard';
 import { ProductModule } from './api/products/product.module';
-
+import databaseConfig from "./config/database";
+import { TypeOrmModule } from '@nestjs/typeorm';
 @Module({
   controllers: [AppController],
-  imports: [DataBaseModule, UserModule, AuthModule, ProductModule],
+  imports: [TypeOrmModule.forRoot(databaseConfig), UserModule, AuthModule, ProductModule], //DataBaseModule
   providers: [AppService],
 })
 export class AppModule {}

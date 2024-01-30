@@ -3,11 +3,12 @@ import { Or, Repository } from 'typeorm';
 import { provider } from '../../constant/provider';
 import { Request } from "express";
 import { Product } from 'src/models/products/product.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @Inject(provider.product)
+    @InjectRepository(Product)
     private productRepository: Repository<Product>,
   ) {}
 
