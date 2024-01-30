@@ -1,9 +1,8 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { Or, Repository } from 'typeorm';
-import { provider } from '../../constant/provider';
-import { Request } from "express";
 import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateProductDto } from 'src/validation/product.validation';
 
 @Injectable()
 export class ProductService {
@@ -17,14 +16,14 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async createProduct(req): Promise<object> {
-    const { body } = req;
+  async createProduct(req: any): Promise<object> {
     try {
       const isExists: Product = await this.productRepository.findOne({
         where: [
-          { productName: body.productName }
+          { productName: req.productName }
         ],
       });
+      console.log(isExists)
       if (isExists) {
         throw new HttpException(
           {
@@ -34,8 +33,8 @@ export class ProductService {
           HttpStatus.CONFLICT,
         );
       } else {
-        body.user = req?.user?.id
-        await this.productRepository.insert(body);
+        req.user = req?.user?.id
+        await this.productRepository.insert(req);
         return { status: true, message: 'Product added successfully' };
       }
     } catch (error) {
