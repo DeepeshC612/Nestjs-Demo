@@ -115,15 +115,22 @@ export class ProductService {
       const product = await this.productRepository
         .createQueryBuilder()
         .delete()
-        .where('id = :id AND userId = :userId', { id: req?.params?.id, userId: req?.body?.user })
+        .where('id = :id AND userId = :userId', {
+          id: req?.params?.id,
+          userId: req?.body?.user,
+        })
         .execute();
       if (product.affected == 1) {
-        return { status: true, data: {}, message: 'Product deleted successfully.' };
+        return {
+          status: true,
+          data: {},
+          message: 'Product deleted successfully.',
+        };
       } else {
         throw new HttpException(
           {
             status: false,
-            error: 'Products not found or can not deleted',
+            error: 'Products not found or can not be deleted',
           },
           HttpStatus.BAD_REQUEST,
         );
