@@ -1,4 +1,4 @@
-import { OmitType, PickType } from '@nestjs/mapped-types';
+import { OmitType, PickType, PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateProductDto {
@@ -19,6 +19,7 @@ export class CreateProductDto {
 
 }
 
+export class UpdateProductDto extends PartialType(CreateProductDto) {}
 export class ProductUserIdDto {
   @IsNotEmpty()
   user: number
@@ -38,4 +39,9 @@ export class QueryProductDto {
   
   @IsOptional()
   search: string;
+}
+
+export class DetailProductDto {
+  @IsNotEmpty()
+  id: number
 }
