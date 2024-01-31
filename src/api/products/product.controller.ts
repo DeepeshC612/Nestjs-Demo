@@ -16,7 +16,6 @@ import { ProductService } from './product.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import {
   CreateProductDto,
-  DetailProductDto,
   ProductUserIdDto,
   QueryProductDto,
   UpdateProductDto,
@@ -68,14 +67,14 @@ export class ProductController {
     }
   }
 
-  @Get('details')
+  @Get(':id')
   @HttpCode(200)
   async productDetails(
-    @Query() query: DetailProductDto,
+    @Param('id') id: number,
     @Body() body: ProductUserIdDto,
   ) {
     try {
-      return await this.productService.productDetails(query, body);
+      return await this.productService.productDetails(id, body);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

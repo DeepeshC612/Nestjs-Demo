@@ -40,8 +40,3 @@ export class QueryProductDto {
   @IsOptional()
   search: string;
 }
-
-export class DetailProductDto {
-  @IsNotEmpty()
-  id: number
-}

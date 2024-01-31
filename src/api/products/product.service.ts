@@ -4,7 +4,6 @@ import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { productSelect } from '../../constant/constants';
 import {
-  DetailProductDto,
   ProductUserIdDto,
   QueryProductDto,
   UpdateProductDto,
@@ -172,11 +171,10 @@ export class ProductService {
    * @returns
    */
   async productDetails(
-    query: DetailProductDto,
+    id: number,
     body: ProductUserIdDto,
   ): Promise<object> {
     try {
-      const { id } = query;
       const product = await this.productRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
