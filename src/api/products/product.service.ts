@@ -1,10 +1,8 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateProductDto } from 'src/validation/product.validation';
-import { join } from 'path';
-
+import { ProductUserIdDto, QueryProductDto } from "../../validation/product.validation";
 @Injectable()
 export class ProductService {
   constructor(
@@ -31,9 +29,8 @@ export class ProductService {
           HttpStatus.CONFLICT,
         );
       } else {
-        // body.user = req?.user?.id;
         await this.productRepository.insert(req);
-        return { status: true, message: 'Product added successfully' };
+        return { status: true, data: {}, message: 'Product added successfully' };
       }
     } catch (error) {
       throw new HttpException(
@@ -54,9 +51,9 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async productList(req: any): Promise<object> {
+  async productList(query: QueryProductDto, body: ProductUserIdDto): Promise<object> {
     try {
-      const { limit, offset, sortBy, sortType, search } = req.query;
+      const { limit, offset, sortBy, sortType, search } = query;
       let orderBy = {};
       if (sortBy) {
         orderBy[`${sortBy}`] = sortType ?? 'ASC';
@@ -70,7 +67,7 @@ export class ProductService {
           'user.name AS userName',
           'user.email AS userEmail',
         ])
-        .where('user.id = :userId', { userId: req?.body?.user })
+        .where('user.id = :userId', { userId: body?.user })
         .andWhere(
           search
             ? '(product.productName LIKE :search OR product.description LIKE :search)'
@@ -105,19 +102,20 @@ export class ProductService {
       );
     }
   }
+
   /**
    * product delete api
    * @req request
    * @returns
    */
-  async productDelete(req: any): Promise<object> {
+  async productDelete(id: number, body: ProductUserIdDto): Promise<object> {
     try {
       const product = await this.productRepository
         .createQueryBuilder()
         .delete()
         .where('id = :id AND userId = :userId', {
-          id: req?.params?.id,
-          userId: req?.body?.user,
+          id: id,
+          userId: body?.user,
         })
         .execute();
       if (product.affected == 1) {
