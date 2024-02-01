@@ -5,17 +5,11 @@ export class CreateProductDto {
   @IsNotEmpty()
   productName: string;
 
-  @IsNumber()
   @IsNotEmpty()
   price: number;
 
   @IsNotEmpty()
   description: string;
-
-  @IsNotEmpty()
-  user: {
-    id: number
-  }
 
 }
 

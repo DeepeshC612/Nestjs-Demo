@@ -11,7 +11,10 @@ import {
   Delete,
   Param,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import {
@@ -26,10 +29,15 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post('create')
+  @UseInterceptors(FileInterceptor('image'))
   @HttpCode(201)
-  async createProduct(@Body() req: CreateProductDto) {
+  async createProduct(
+    @Body() body: CreateProductDto,
+    @Req() req: Request,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
     try {
-      return await this.productService.createProduct(req);
+      return await this.productService.createProduct(body, req, image);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,
@@ -39,10 +47,16 @@ export class ProductController {
   }
 
   @Put(':id')
+  @UseInterceptors(FileInterceptor('image'))
   @HttpCode(200)
-  async updateProduct(@Body() body: UpdateProductDto, @Param('id') id: number) {
+  async updateProduct(
+    @Body() body: UpdateProductDto,
+    @Req() req: Request,
+    @Param('id') id: number,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
     try {
-      return await this.productService.updateProduct(body, id);
+      return await this.productService.updateProduct(body, req, id, image);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

@@ -21,6 +21,9 @@ export class Product {
   @Column({ length: 1000 })
   description: string;
 
+  @Column()
+  image: string;
+
   @ManyToOne(() => User, (user) => user.id)
   user: User;
 }

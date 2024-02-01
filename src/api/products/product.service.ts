@@ -20,10 +20,10 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async createProduct(req: any): Promise<object> {
+  async createProduct(body: any, req: any, image: Express.Multer.File): Promise<object> {
     try {
       const isExists: Product = await this.productRepository.findOne({
-        where: [{ productName: req.productName }],
+        where: [{ productName: body.productName }],
       });
       if (isExists) {
         throw new HttpException(
@@ -34,7 +34,9 @@ export class ProductService {
           HttpStatus.CONFLICT,
         );
       } else {
-        await this.productRepository.insert(req);
+        body.user = req.user;
+        body.image = image.path;
+        await this.productRepository.insert(body);
         return {
           status: true,
           data: {},
@@ -60,9 +62,9 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async updateProduct(body: UpdateProductDto, id: number): Promise<object> {
+  async updateProduct(body: UpdateProductDto, req: any, id: number, image: Express.Multer.File): Promise<object> {
     try {
-      const { description, price, productName, user } = body;
+      const { description, price, productName } = body;
       let updateProperties = {};
       if (description) {
         updateProperties['description'] = description;
@@ -73,12 +75,15 @@ export class ProductService {
       if (productName) {
         updateProperties['productName'] = productName;
       }
+      if(image) {
+        updateProperties['image'] = image?.path
+      }
       const result: UpdateResult = await this.productRepository
         .createQueryBuilder()
         .update()
         .set(updateProperties)
         .where('id = :productId', { productId: id })
-        .andWhere('user = :userId', { userId: user })
+        .andWhere('user = :userId', { userId: req?.user })
         .execute();
       if (result.affected == 1) {
         return {
