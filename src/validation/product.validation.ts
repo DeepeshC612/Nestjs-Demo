@@ -1,5 +1,5 @@
-import { OmitType, PickType, PartialType } from '@nestjs/mapped-types';
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { PartialType } from '@nestjs/mapped-types';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateProductDto {
   @IsNotEmpty()

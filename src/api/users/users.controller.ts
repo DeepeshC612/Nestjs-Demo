@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Req,
   HttpException,
   HttpCode,
   Query,
@@ -12,7 +11,7 @@ import {
   UploadedFile
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUserDto, LoginUserDto } from '../../validation/user.validation'
+import { CreateUserDto } from '../../validation/user.validation'
 import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 

@@ -1,5 +1,5 @@
-import { OmitType, PickType } from '@nestjs/mapped-types';
-import { IsEmail, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { OmitType } from '@nestjs/mapped-types';
+import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
