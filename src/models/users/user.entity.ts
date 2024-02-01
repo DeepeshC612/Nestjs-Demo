@@ -14,6 +14,9 @@ export class User {
   @Column({ length: 500 })
   password: string;
 
+  @Column()
+  profilePic: string;
+
   @Column({ length: 20 })
   phoneNum: string;
 

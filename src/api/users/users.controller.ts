@@ -7,21 +7,25 @@ import {
   HttpCode,
   Query,
   Body,
-  UseGuards
+  UseGuards,
+  UseInterceptors,
+  UploadedFile
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { CreateUserDto, LoginUserDto } from '../../validation/user.validation'
 import { AuthGuard } from "../../auth/auth.guard";
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
+  @UseInterceptors(FileInterceptor('profilePic'))
   @HttpCode(201)
-  async postUser(@Body() req: CreateUserDto) {
+  async postUser(@Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
     try {
-      return await this.userService.postUser(req);
+      return await this.userService.postUser(req, profilePic);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

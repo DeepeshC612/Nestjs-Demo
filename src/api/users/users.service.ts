@@ -18,7 +18,7 @@ export class UserService {
    * @req request
    * @returns
    */
-  async postUser(req: CreateUserDto): Promise<object> {
+  async postUser(req: CreateUserDto, profilePic: Express.Multer.File): Promise<object> {
     const { password } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
@@ -36,6 +36,7 @@ export class UserService {
         );
       } else {
         req.password = await hashPassword(password);
+        req.profilePic = profilePic?.path;
         await this.userRepository.insert(req);
         return { status: true, message: 'User created successfully' };
       }
