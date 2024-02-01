@@ -4,7 +4,6 @@ import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { productSelect } from '../../constant/constants';
 import {
-  ProductUserIdDto,
   QueryProductDto,
   UpdateProductDto,
 } from '../../validation/product.validation';
@@ -62,7 +61,7 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async updateProduct(body: UpdateProductDto, req: any, id: number, image: Express.Multer.File): Promise<object> {
+  async updateProduct(body: UpdateProductDto, id: number, image: Express.Multer.File): Promise<object> {
     try {
       const { description, price, productName } = body;
       let updateProperties = {};
@@ -83,7 +82,6 @@ export class ProductService {
         .update()
         .set(updateProperties)
         .where('id = :productId', { productId: id })
-        .andWhere('user = :userId', { userId: req?.user })
         .execute();
       if (result.affected == 1) {
         return {
@@ -122,7 +120,7 @@ export class ProductService {
    */
   async productList(
     query: QueryProductDto,
-    body: ProductUserIdDto,
+    body
   ): Promise<object> {
     try {
       const { limit, offset, sortBy, sortType, search } = query;
@@ -177,15 +175,13 @@ export class ProductService {
    */
   async productDetails(
     id: number,
-    body: ProductUserIdDto,
   ): Promise<object> {
     try {
       const product = await this.productRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
         .select(productSelect)
-        .where('user.id = :userId AND product.id = :productId', {
-          userId: body?.user,
+        .where('product.id = :productId', {
           productId: id,
         })
         .getRawOne();
@@ -195,7 +191,7 @@ export class ProductService {
         throw new HttpException(
           {
             status: false,
-            error: 'Products not found',
+            error: 'Product not found',
           },
           HttpStatus.BAD_REQUEST,
         );
@@ -221,15 +217,13 @@ export class ProductService {
    */
   async productDelete(
     id: number,
-    body: ProductUserIdDto,
   ): Promise<object> {
     try {
       const product = await this.productRepository
         .createQueryBuilder()
         .delete()
-        .where('id = :id AND userId = :userId', {
+        .where('id = :id', {
           id: id,
-          userId: body?.user,
         })
         .execute();
       if (product.affected == 1) {

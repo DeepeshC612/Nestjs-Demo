@@ -14,10 +14,7 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
-export class ProductUserIdDto {
-  @IsNotEmpty()
-  user: number
-}
+
 export class QueryProductDto {
   @IsOptional()
   limit: number;
