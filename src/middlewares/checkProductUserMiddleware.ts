@@ -18,7 +18,6 @@ export class ProductCheck implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     try {
-      console.log('user', request.user);
       const isExists: Product[] = await this.productRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')

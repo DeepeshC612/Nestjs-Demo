@@ -69,10 +69,10 @@ export class ProductController {
   @HttpCode(200)
   async productList(
     @Query() query: QueryProductDto,
-    @Body() body
+    @Req() req: Request
   ) {
     try {
-      return await this.productService.productList(query, body);
+      return await this.productService.productList(query, req);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

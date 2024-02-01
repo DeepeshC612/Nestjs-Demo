@@ -120,7 +120,7 @@ export class ProductService {
    */
   async productList(
     query: QueryProductDto,
-    body
+    req: any
   ): Promise<object> {
     try {
       const { limit, offset, sortBy, sortType, search } = query;
@@ -132,7 +132,7 @@ export class ProductService {
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
         .select(productSelect)
-        .where('user.id = :userId', { userId: body?.user })
+        .where('user.id = :userId', { userId: req?.user })
         .andWhere(
           search
             ? '(product.productName LIKE :search OR product.description LIKE :search)'
