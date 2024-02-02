@@ -7,6 +7,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Product } from '../models/products/product.entity';
+import { UserRoles } from 'src/constant/constants';
 
 @Injectable()
 export class ProductCheck implements CanActivate {
@@ -26,6 +27,9 @@ export class ProductCheck implements CanActivate {
           userId: request?.user?.id,
         })
         .getRawMany();
+      if(request?.user?.role == UserRoles.ADMIN) {
+        return true
+      }
       if (!isExists.length) {
         throw new ForbiddenException({
           status: false,
