@@ -14,6 +14,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
+import { Roles } from "../../decorators/roles.decorator";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductService } from './product.service';
 import { AuthGuard } from '../../auth/auth.guard';
@@ -23,6 +24,8 @@ import {
   UpdateProductDto,
 } from '../../validation/product.validation';
 import { ProductCheck } from 'src/middlewares/checkProductUserMiddleware';
+import { UserRoles } from 'src/constant/constants';
+import { RolesGuard } from 'src/auth/roles.guard';
 @Controller('product')
 @UseGuards(AuthGuard)
 export class ProductController {
@@ -66,6 +69,8 @@ export class ProductController {
   }
 
   @Get('')
+  @Roles([UserRoles.ADMIN, UserRoles.USER])
+  @UseGuards(RolesGuard)
   @HttpCode(200)
   async productList(
     @Query() query: QueryProductDto,

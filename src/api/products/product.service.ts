@@ -2,7 +2,7 @@ import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { Repository, UpdateResult } from 'typeorm';
 import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { productSelect } from '../../constant/constants';
+import { UserRoles, productSelect } from '../../constant/constants';
 import {
   QueryProductDto,
   UpdateProductDto,
@@ -124,15 +124,19 @@ export class ProductService {
   ): Promise<object> {
     try {
       const { limit, offset, sortBy, sortType, search } = query;
+      let userRole: string;
       let orderBy = {};
       if (sortBy) {
         orderBy[`${sortBy}`] = sortType ?? 'ASC';
+      }
+      if(req?.user?.role == UserRoles.ADMIN) {
+        userRole = req?.user?.role
       }
       const product = await this.productRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
         .select(productSelect)
-        .where('user.id = :userId', { userId: req?.user?.id })
+        .where(userRole ? '1=1' : 'user.id = :userId', { userId: req?.user?.id })
         .andWhere(
           search
             ? '(product.productName LIKE :search OR product.description LIKE :search)'
@@ -142,6 +146,7 @@ export class ProductService {
         .limit(limit ?? 10)
         .offset(offset ?? 0)
         .orderBy(orderBy ?? {})
+        //.getQuery()
         .getRawMany();
       if (product) {
         return { status: true, data: product, message: 'Product list.' };
