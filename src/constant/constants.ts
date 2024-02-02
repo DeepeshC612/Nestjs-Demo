@@ -7,3 +7,9 @@ export const productSelect = [
   'user.name AS userName',
   'user.email AS userEmail',
 ];
+
+
+export enum UserRoles {
+  ADMIN = 'admin',
+  USER = 'user'
+}

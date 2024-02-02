@@ -26,6 +26,7 @@ import {
           }
         );
         request.user = payload.id;
+        request.role = payload.role;
       } catch {
         throw new UnauthorizedException();
       }

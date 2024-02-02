@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { Product } from "../products/product.entity";
+import { UserRoles } from '../../constant/constants';
+import { Product } from '../products/product.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -19,6 +20,9 @@ export class User {
 
   @Column({ length: 20 })
   phoneNum: string;
+
+  @Column({ type: 'enum', enum: UserRoles, default: UserRoles.USER })
+  role: UserRoles;
 
   @OneToMany(() => Product, (product) => product.user)
   photos: Product[];
