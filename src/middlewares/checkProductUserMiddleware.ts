@@ -22,8 +22,8 @@ export class ProductCheck implements CanActivate {
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
         .where('product.id = :productId AND user.id = :userId', {
-          productId: request.params.id,
-          userId: request.user,
+          productId: request?.params?.id,
+          userId: request?.user?.id,
         })
         .getRawMany();
       if (!isExists.length) {

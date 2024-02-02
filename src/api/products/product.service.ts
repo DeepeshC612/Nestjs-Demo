@@ -33,7 +33,7 @@ export class ProductService {
           HttpStatus.CONFLICT,
         );
       } else {
-        body.user = req.user;
+        body.user = req.user.id;
         body.image = image.path;
         await this.productRepository.insert(body);
         return {
@@ -132,7 +132,7 @@ export class ProductService {
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
         .select(productSelect)
-        .where('user.id = :userId', { userId: req?.user })
+        .where('user.id = :userId', { userId: req?.user?.id })
         .andWhere(
           search
             ? '(product.productName LIKE :search OR product.description LIKE :search)'

@@ -25,8 +25,7 @@ import {
             secret: getEnv('jwt_secret')
           }
         );
-        request.user = payload.id;
-        request.role = payload.role;
+        request.user = payload;
       } catch {
         throw new UnauthorizedException();
       }
