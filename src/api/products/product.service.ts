@@ -124,19 +124,19 @@ export class ProductService {
   ): Promise<object> {
     try {
       const { limit, offset, sortBy, sortType, search } = query;
-      let userRole: string;
+      let isAdmin: string;
       let orderBy = {};
       if (sortBy) {
         orderBy[`${sortBy}`] = sortType ?? 'ASC';
       }
       if(req?.user?.role == UserRoles.ADMIN) {
-        userRole = req?.user?.role
+        isAdmin = req?.user?.role
       }
       const product = await this.productRepository
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.user', 'user')
         .select(productSelect)
-        .where(userRole ? '1=1' : 'user.id = :userId', { userId: req?.user?.id })
+        .where(isAdmin ? '1=1' : 'user.id = :userId', { userId: req?.user?.id })
         .andWhere(
           search
             ? '(product.productName LIKE :search OR product.description LIKE :search)'
@@ -146,7 +146,6 @@ export class ProductService {
         .limit(limit ?? 10)
         .offset(offset ?? 0)
         .orderBy(orderBy ?? {})
-        //.getQuery()
         .getRawMany();
       if (product) {
         return { status: true, data: product, message: 'Product list.' };
