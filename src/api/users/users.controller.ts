@@ -8,12 +8,17 @@ import {
   Body,
   UseGuards,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
+  Delete,
+  Param
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { CreateUserDto } from '../../validation/user.validation'
 import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles } from 'src/decorators/roles.decorator';
+import { UserRoles } from 'src/constant/constants';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('user')
 export class UserController {
@@ -32,8 +37,24 @@ export class UserController {
       );
     }
   }
-  @UseGuards(AuthGuard)
+
+  @Delete(':id')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles([UserRoles.ADMIN])
+  @HttpCode(200)
+  async deleteUser(@Param('id') id: number) {
+    try {
+      return await this.userService.deleteUser(id);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
+
   @Get('')
+  @UseGuards(AuthGuard)
   @HttpCode(200)
   async getUser(@Query('email') email: string) {
     try {

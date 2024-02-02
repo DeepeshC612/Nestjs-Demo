@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { Product } from 'src/models/products/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRoles, productSelect } from '../../constant/constants';
@@ -222,7 +222,7 @@ export class ProductService {
     id: number,
   ): Promise<object> {
     try {
-      const product = await this.productRepository
+      const product: DeleteResult = await this.productRepository
         .createQueryBuilder()
         .delete()
         .where('id = :id', {

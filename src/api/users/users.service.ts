@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { Or, Repository } from 'typeorm';
+import { DeleteResult, Or, Repository } from 'typeorm';
 import { User } from '../../models/users/user.entity';
 import { provider } from '../../constant/provider';
 import { hashPassword, comparePass } from '../../constant/hashing';
@@ -18,13 +18,14 @@ export class UserService {
    * @req request
    * @returns
    */
-  async postUser(req: CreateUserDto, profilePic: Express.Multer.File): Promise<object> {
+  async postUser(
+    req: CreateUserDto,
+    profilePic: Express.Multer.File,
+  ): Promise<object> {
     const { password } = req;
     try {
       const isExists: User = await this.userRepository.findOne({
-        where: [
-          { email: req.email }, { phoneNum: req.phoneNum }
-        ],
+        where: [{ email: req.email }, { phoneNum: req.phoneNum }],
       });
       if (isExists) {
         throw new HttpException(
@@ -39,6 +40,44 @@ export class UserService {
         req.profilePic = profilePic?.path;
         await this.userRepository.insert(req);
         return { status: true, message: 'User created successfully' };
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+  /**
+   * Delete user
+   * @req request
+   * @returns
+   */
+  async deleteUser(id: number): Promise<object> {
+    try {
+      const result: DeleteResult = await this.userRepository
+        .createQueryBuilder()
+        .delete()
+        .where('id = :id', {
+          id: id,
+        })
+        .execute();
+      if (result.affected == 1) {
+        return { status: true, data: {}, message: 'User deleted successfully' };
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Unable to delete user',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } catch (error) {
       throw new HttpException(
@@ -104,10 +143,10 @@ export class UserService {
             error: 'User not found',
           },
           HttpStatus.BAD_REQUEST,
-          );
-        }
-        return user;
-      } catch (error) {
+        );
+      }
+      return user;
+    } catch (error) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,

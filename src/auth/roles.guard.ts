@@ -16,7 +16,7 @@ export class RolesGuard implements CanActivate {
     if(!roles.includes(user.role)) {
         throw new UnauthorizedException({
             status: false,
-            message: `This is route is not accessible by ${user.role}`
+            message: `This is route is not accessible from ${user.role}`
         })
     } else {
         return roles.includes(user.role)
