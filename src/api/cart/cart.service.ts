@@ -1,5 +1,5 @@
-import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { HttpStatus, Injectable, HttpException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from 'src/models/cart.entity';
 
@@ -24,9 +24,14 @@ export class CartService {
         await this.cartRepository
           .createQueryBuilder()
           .update()
-          .set({ quantity: body.quantity })
+          .set({ quantity: isProductExists.quantity + body.quantity })
           .where('id = :cartId', { cartId: isProductExists.id })
           .execute();
+        return {
+          status: true,
+          data: {},
+          message: 'Product added to cart successfully',
+        };
       } else {
         body.user = req.user.id;
         await this.cartRepository.insert(body);
