@@ -9,6 +9,9 @@ export class CreateProductDto {
   price: number;
 
   @IsNotEmpty()
+  quantity: number;
+
+  @IsNotEmpty()
   description: string;
 
 }

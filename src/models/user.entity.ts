@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
-import { UserRoles } from '../../constant/constants';
-import { Product } from '../products/product.entity';
+import { UserRoles } from '../constant/constants';
+import { Product } from './product.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

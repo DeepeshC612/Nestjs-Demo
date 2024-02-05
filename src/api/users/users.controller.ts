@@ -10,7 +10,8 @@ import {
   UseInterceptors,
   UploadedFile,
   Delete,
-  Param
+  Param,
+  Req
 } from '@nestjs/common';
 import { UserService } from './users.service';
 import { CreateUserDto } from '../../validation/user.validation'
@@ -27,8 +28,10 @@ export class UserController {
   @Post('signup')
   @UseInterceptors(FileInterceptor('profilePic'))
   @HttpCode(201)
-  async postUser(@Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
+  async postUser(@Req() rea, @Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
     try {
+      console.log("request", rea?.file);
+      console.log('profile', profilePic)
       return await this.userService.postUser(req, profilePic);
     } catch (error) {
       throw new HttpException(

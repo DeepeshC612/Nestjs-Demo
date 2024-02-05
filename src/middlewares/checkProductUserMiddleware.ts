@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from '../models/products/product.entity';
+import { Product } from '../models/product.entity';
 import { UserRoles } from 'src/constant/constants';
 
 @Injectable()

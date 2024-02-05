@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { DeleteResult, Or, Repository } from 'typeorm';
-import { User } from '../../models/users/user.entity';
+import { User } from '../../models/user.entity';
 import { provider } from '../../constant/provider';
 import { hashPassword, comparePass } from '../../constant/hashing';
 import { CreateUserDto, LoginUserDto } from '../../validation/user.validation';

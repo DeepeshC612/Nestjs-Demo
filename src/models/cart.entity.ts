@@ -5,25 +5,20 @@ import {
   ManyToOne,
   OneToOne,
 } from 'typeorm';
-import { User } from '../users/user.entity';
+import { User } from './user.entity';
+import { Product } from './product.entity';
 
 @Entity()
-export class Product {
+export class Cart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 500 })
-  productName: string;
-
   @Column()
-  price: number;
-
-  @Column({ length: 1000 })
-  description: string;
-
-  @Column()
-  image: string;
+  quantity: number;
 
   @ManyToOne(() => User, (user) => user.id)
   user: User;
+
+  @ManyToOne(() => Product, (product) => product.id)
+  product: Product;
 }

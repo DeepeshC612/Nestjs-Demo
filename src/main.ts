@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { getEnv } from './constant/environment';
 import { ValidationPipe } from '@nestjs/common';
-import { AuthGuard } from './auth/auth.guard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
+    logger: ["error", 'warn', 'debug'],
     abortOnError: false,
   });
   app.useGlobalPipes(
@@ -15,6 +15,10 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  app.enableCors({
+    origin: '*',
+    credentials: true,
+  });
   await app.listen(getEnv('port'));
 }
 bootstrap();

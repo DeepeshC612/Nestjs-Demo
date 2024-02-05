@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { Product } from 'src/models/products/product.entity';
+import { Product } from 'src/models/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRoles, productSelect } from '../../constant/constants';
 import {
@@ -63,10 +63,13 @@ export class ProductService {
    */
   async updateProduct(body: UpdateProductDto, id: number, image: Express.Multer.File): Promise<object> {
     try {
-      const { description, price, productName } = body;
+      const { description, price, productName, quantity } = body;
       let updateProperties = {};
       if (description) {
         updateProperties['description'] = description;
+      }
+      if (quantity) {
+        updateProperties['quantity'] = quantity;
       }
       if (price) {
         updateProperties['price'] = price;
