@@ -17,15 +17,20 @@ export class CartService {
    */
   async addToCart(body: any, req: any): Promise<object> {
     try {
-      const isProductExists: Cart = await this.cartRepository.findOne({
-        where: [{ product: body.productId, user: req.user.id }],
-      });
+      const isProductExists = await this.cartRepository
+        .createQueryBuilder('cart')
+        .where('cart.product = :productId AND cart.user = :userId', {
+          productId: body.productId,
+          userId: req.user.id,
+        })
+        .getRawOne();
       if (isProductExists) {
+        console.log('is', isProductExists);
         await this.cartRepository
           .createQueryBuilder()
           .update()
-          .set({ quantity: isProductExists.quantity + body.quantity })
-          .where('id = :cartId', { cartId: isProductExists.id })
+          .set({ quantity: isProductExists.cart_quantity + body.quantity })
+          .where('id = :cartId', { cartId: isProductExists.cart_id })
           .execute();
         return {
           status: true,
@@ -34,6 +39,7 @@ export class CartService {
         };
       } else {
         body.user = req.user.id;
+        body.product = body.productId;
         await this.cartRepository.insert(body);
         return {
           status: true,

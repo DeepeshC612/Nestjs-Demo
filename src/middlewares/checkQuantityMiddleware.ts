@@ -21,14 +21,14 @@ export class QuantityCheck implements CanActivate {
       const isExists = await this.cartRepository
         .createQueryBuilder('cart')
         .leftJoinAndSelect('cart.product', 'product')
-        .where('product.id = :productId AND product.user = :userId', {
+        .where('cart.product = :productId AND cart.user = :userId', {
           productId: request?.body?.productId,
           userId: request?.user?.id,
         })
         .getRawOne();
       if (
-        isExists.product_quantity < request?.body?.quantity ||
-        isExists.cart_quantity > isExists.product_quantity
+        isExists?.product_quantity < request?.body?.quantity ||
+        isExists?.cart_quantity >= isExists?.product_quantity
       ) {
         throw new BadRequestException({
           status: false,
