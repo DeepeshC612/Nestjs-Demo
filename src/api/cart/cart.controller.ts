@@ -35,4 +35,19 @@ export class CartController {
       );
     }
   }
+
+  @Get('')
+  @Roles([UserRoles.USER])
+  @UseGuards(RolesGuard)
+  @HttpCode(200)
+  async cartList(@Req() req: Request) {
+    try {
+      return await this.cartServices.cartList(req);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
 }

@@ -60,4 +60,46 @@ export class CartService {
       );
     }
   }
+
+  /**
+   * cart list api
+   * @req request
+   * @returns
+   */
+  async cartList(
+    req: any,
+  ): Promise<object> {
+    try {
+      const cart = await this.cartRepository
+        .createQueryBuilder('cart')
+        .leftJoinAndSelect('cart.product', '')
+       // .select(productSelect)
+        .where('cart.user = :userId', {
+          userId: req?.user?.id,
+        })
+        .getRawOne();
+      if (cart) {
+        return { status: true, data: cart, message: 'Cart list.' };
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Cart not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
 }

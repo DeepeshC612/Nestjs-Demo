@@ -1,20 +1,21 @@
 import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer-options.interface';
 import { diskStorage } from 'multer';
-import { extname } from 'path';
+import * as Path from 'path';
 import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
-
+ 
+const dirname = Path.dirname(__dirname)
 export const multerConfig: MulterOptions = {
-  dest: 'C:/Users/codiant/Desktop/nest js demo/nextjs-demo/src/uploads',
+  dest: Path.join(dirname, '..','src', 'uploads'),
   storage: diskStorage({
     destination: (req, file, cb) => {
-      cb(null, 'C:/Users/codiant/Desktop/nest js demo/nextjs-demo/src/uploads');
+      cb(null, Path.join(dirname, '..', 'src', 'uploads'),);
     },
     filename: (req, file, cb) => {
       const fileName = `${
         file.originalname.split('.')[0]
-      }.${Date.now()}${extname(file.originalname)}`;
+      }.${Date.now()}${Path.extname(file.originalname)}`;
       cb(null, fileName);
     },
   }),
