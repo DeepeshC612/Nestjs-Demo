@@ -74,7 +74,7 @@ export class CartService {
       const cart = await this.cartRepository
         .createQueryBuilder('cart')
         .delete()
-        .where('cart.user = :userId AND cart.product = :productId', {
+        .where('cart.userId = :userId AND cart.productId = :productId', {
           userId: req?.user?.id,
           productId: req?.params?.id,
         })
@@ -103,7 +103,7 @@ export class CartService {
       );
     }
   }
-  
+
   /**
    * cart list api
    * @req request
