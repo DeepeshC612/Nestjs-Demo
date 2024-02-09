@@ -1,9 +1,10 @@
 import { ProductCheck } from './checkProductUserMiddleware';
 import { QuantityCheck } from './checkQuantityMiddleware';
-import { EmptyCartCheck } from './emptyCartUserMiddleware';
+import { EmptyCartCheck, CartProductCheck } from './emptyCartUserMiddleware';
 
 export default {
   ProductCheck,
   QuantityCheck,
   EmptyCartCheck,
+  CartProductCheck
 };

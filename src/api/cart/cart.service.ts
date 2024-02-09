@@ -67,6 +67,48 @@ export class CartService {
    * @req request
    * @returns
    */
+  async cartRemove(
+    req: any,
+  ): Promise<object> {
+    try {
+      const cart = await this.cartRepository
+        .createQueryBuilder('cart')
+        .delete()
+        .where('cart.user = :userId AND cart.product = :productId', {
+          userId: req?.user?.id,
+          productId: req?.params?.id,
+        })
+        .execute();
+      if (cart) {
+        return { status: true, data: {}, message: 'Product removed successfully.' };
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Product not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+  
+  /**
+   * cart list api
+   * @req request
+   * @returns
+   */
   async cartList(
     req: any,
   ): Promise<object> {

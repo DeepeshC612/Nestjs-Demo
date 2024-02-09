@@ -8,6 +8,7 @@ import {
   Query,
   Body,
   UseGuards,
+  Delete,
 } from '@nestjs/common';
 import { Roles } from '../../decorators/roles.decorator';
 import { CartService } from './cart.service';
@@ -43,6 +44,20 @@ export class CartController {
   async cartList(@Req() req: Request) {
     try {
       return await this.cartServices.cartList(req);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
+  @Delete(':id')
+  @Roles([UserRoles.USER])
+  @UseGuards(RolesGuard, middlewares.CartProductCheck)
+  @HttpCode(200)
+  async removeFromCart(@Req() req: Request) {
+    try {
+      return await this.cartServices.cartRemove(req);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,
