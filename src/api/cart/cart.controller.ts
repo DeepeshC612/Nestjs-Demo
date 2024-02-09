@@ -15,7 +15,7 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { AddToCartDto } from '../../validation/cart.validation';
 import { UserRoles } from 'src/constant/constants';
 import { RolesGuard } from 'src/auth/roles.guard';
-import { QuantityCheck } from 'src/middlewares/checkQuantityMiddleware';
+import middlewares from "../../middlewares/index";
 @Controller('cart')
 @UseGuards(AuthGuard)
 export class CartController {
@@ -23,7 +23,7 @@ export class CartController {
 
   @Post('')
   @Roles([UserRoles.USER])
-  @UseGuards(RolesGuard, QuantityCheck)
+  @UseGuards(RolesGuard, middlewares.QuantityCheck)
   @HttpCode(201)
   async addToCart(@Body() body: AddToCartDto, @Req() req: Request) {
     try {
@@ -38,7 +38,7 @@ export class CartController {
 
   @Get('')
   @Roles([UserRoles.USER])
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard, middlewares.EmptyCartCheck)
   @HttpCode(200)
   async cartList(@Req() req: Request) {
     try {
