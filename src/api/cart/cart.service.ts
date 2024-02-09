@@ -2,6 +2,7 @@ import { HttpStatus, Injectable, HttpException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cart } from 'src/models/cart.entity';
+import { cartSelect } from 'src/constant/constants';
 
 @Injectable()
 export class CartService {
@@ -72,12 +73,13 @@ export class CartService {
     try {
       const cart = await this.cartRepository
         .createQueryBuilder('cart')
-        .leftJoinAndSelect('cart.product', '')
-       // .select(productSelect)
+        .leftJoinAndSelect('cart.product', 'product')
+        .leftJoinAndSelect('product.user', 'user')
+        .select(cartSelect)
         .where('cart.user = :userId', {
           userId: req?.user?.id,
         })
-        .getRawOne();
+        .getRawMany();
       if (cart) {
         return { status: true, data: cart, message: 'Cart list.' };
       } else {
