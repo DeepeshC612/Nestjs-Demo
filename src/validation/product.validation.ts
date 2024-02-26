@@ -6,9 +6,9 @@ export class CreateProductDto {
   @ApiProperty()
   productName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @ApiPropertyOptional({ type: 'string', format: 'binary' })
-  image: string;
+  image: any;
 
   @IsNotEmpty()
   @ApiProperty()
