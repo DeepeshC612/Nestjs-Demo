@@ -7,7 +7,6 @@ import {
  
 const dirname = Path.dirname(__dirname)
 export const multerConfig: MulterOptions = {
-  dest: Path.join(dirname, '..','src', 'uploads'),
   storage: diskStorage({
     destination: (req, file, cb) => {
       cb(null, Path.join(dirname, '..', 'src', 'uploads'),);

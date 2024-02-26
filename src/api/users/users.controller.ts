@@ -30,8 +30,6 @@ export class UserController {
   @HttpCode(201)
   async postUser(@Req() rea, @Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
     try {
-      console.log("request", rea?.file);
-      console.log('profile', profilePic)
       return await this.userService.postUser(req, profilePic);
     } catch (error) {
       throw new HttpException(
