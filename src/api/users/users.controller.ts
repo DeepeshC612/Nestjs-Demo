@@ -19,13 +19,16 @@ import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRoles } from 'src/constant/constants';
+import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('user')
+@ApiTags('accounts')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post('signup')
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('profilePic'))
   @HttpCode(201)
   async postUser(@Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {

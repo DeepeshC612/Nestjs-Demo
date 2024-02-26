@@ -1,31 +1,34 @@
-import { OmitType } from '@nestjs/mapped-types';
 import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { UserRoles } from 'src/constant/constants';
-
+import { ApiProperty, PickType, ApiPropertyOptional, } from '@nestjs/swagger';
 export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty()
+  @ApiProperty()
   email: string;
 
   @IsNotEmpty()
+  @ApiProperty()
   password: string;
 
   @IsNotEmpty()
+  @ApiProperty()
   phoneNum: string;
 
   @IsOptional()
-  profilePic: string;
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  profilePic: any;
 
   @IsNotEmpty()
+  @ApiProperty()
   name: string;
 
   @IsOptional()
+  @ApiPropertyOptional()
   role: UserRoles;
 }
 
-export class LoginUserDto extends OmitType(CreateUserDto, [
-  'name',
-  'phoneNum',
-  'profilePic',
-  'role'
+export class LoginUserDto extends PickType(CreateUserDto, [
+  'email',
+  'password',
 ] as const) {}
