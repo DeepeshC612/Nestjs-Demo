@@ -9,8 +9,8 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get('')
-  getHello(@Res() res: Response) {
+  getHello() {
     //res.status(HttpStatus.CREATED).json({ message: 'heelow' });
-    return this.appService.getHello(res);
+    return this.appService.getHello();
   }
 }
