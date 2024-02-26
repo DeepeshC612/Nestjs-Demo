@@ -28,7 +28,7 @@ export class UserController {
   @Post('signup')
   @UseInterceptors(FileInterceptor('profilePic'))
   @HttpCode(201)
-  async postUser(@Req() rea, @Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
+  async postUser(@Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
     try {
       return await this.userService.postUser(req, profilePic);
     } catch (error) {
