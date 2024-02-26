@@ -19,7 +19,7 @@ import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UserRoles } from 'src/constant/constants';
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('user')
@@ -43,6 +43,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard, RolesGuard)
   @Roles([UserRoles.ADMIN])
   @HttpCode(200)
@@ -58,6 +59,7 @@ export class UserController {
   }
 
   @Get('')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(200)
   async getUser(@Query('email') email: string) {

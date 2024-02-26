@@ -13,7 +13,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
    .setTitle('Nestjs Demo')
    .addBearerAuth()
-   .setDescription('Nestjs api description')
+   .setDescription('Nestjs apis')
    .setVersion('1.0')
    .build();
   const document = SwaggerModule.createDocument(app, config);

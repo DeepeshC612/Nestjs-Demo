@@ -26,12 +26,16 @@ import {
 import { ProductCheck } from 'src/middlewares/checkProductUserMiddleware';
 import { UserRoles } from 'src/constant/constants';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 @Controller('product')
+@ApiTags('product')
+@ApiBearerAuth()
 @UseGuards(AuthGuard)
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Post('create')
+  @ApiConsumes('multipart/form-data')
   @UseInterceptors(FileInterceptor('image'))
   @HttpCode(201)
   async createProduct(
@@ -50,6 +54,7 @@ export class ProductController {
   }
 
   @Put(':id')
+  @ApiConsumes('multipart/form-data')
   @UseGuards(ProductCheck)
   @UseInterceptors(FileInterceptor('image'))
   @HttpCode(200)

@@ -1,18 +1,25 @@
-import { PartialType } from '@nestjs/mapped-types';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional, PartialType } from "@nestjs/swagger";
 
 export class CreateProductDto {
   @IsNotEmpty()
+  @ApiProperty()
   productName: string;
 
   @IsNotEmpty()
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  image: string;
+
+  @IsNotEmpty()
+  @ApiProperty()
   price: number;
 
   @IsNotEmpty()
+  @ApiProperty()
   quantity: number;
 
   @IsNotEmpty()
+  @ApiProperty()
   description: string;
 
 }
@@ -21,17 +28,22 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {}
 
 export class QueryProductDto {
   @IsOptional()
-  limit: number;
+  @ApiPropertyOptional()
+  limit?: number;
   
   @IsOptional()
-  offset: number;
+  @ApiPropertyOptional()
+  offset?: number;
   
   @IsOptional()
-  sortBy: string;
+  @ApiPropertyOptional()
+  sortBy?: string;
   
   @IsOptional()
-  sortType: string;
+  @ApiPropertyOptional()
+  sortType?: string;
   
   @IsOptional()
-  search: string;
+  @ApiPropertyOptional()
+  search?: string;
 }

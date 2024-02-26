@@ -33,8 +33,8 @@ export class ProductService {
           HttpStatus.CONFLICT,
         );
       } else {
-        body.user = req.user.id;
-        body.image = image.path;
+        body.user = req?.user?.id;
+        body.image = image?.path;
         await this.productRepository.insert(body);
         return {
           status: true,
