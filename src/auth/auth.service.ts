@@ -1,8 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../api/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { comparePass } from '../constant/hashing';
-
+import { getEnv } from "../constant/environment";
+import { VerifyEmailDto } from 'src/validation/user.validation';
 @Injectable()
 export class AuthService {
   constructor(
@@ -31,5 +32,34 @@ export class AuthService {
       data: user,
       access_token: await this.jwtService.signAsync(payload),
     };
+  }
+  async verifyToken(query: VerifyEmailDto): Promise<object> {
+    try {
+      const { token } =  query;
+      const payload = await this.jwtService.verifyAsync(
+        token,
+        {
+          secret: getEnv('jwt_secret')
+        }
+      );
+      if(payload) {
+        return {
+          status: true,
+          data: payload?.email,
+          message: "Your email is verified successfully"
+        };
+      } else {
+        throw new UnauthorizedException()
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(
+        {
+          status: false,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

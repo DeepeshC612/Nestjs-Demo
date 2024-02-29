@@ -1,6 +1,6 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode, HttpStatus, Query, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginUserDto } from 'src/validation/user.validation';
+import { LoginUserDto, VerifyEmailDto } from 'src/validation/user.validation';
 import { ApiTags } from '@nestjs/swagger';
 
 @Controller('')
@@ -12,5 +12,11 @@ export class AuthController {
   @Post('login')
   signIn(@Body() signInDto: LoginUserDto) {
     return this.authService.signIn(signInDto.email, signInDto.password);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('auth')
+  verifyToken(@Query() query: VerifyEmailDto) {
+    return this.authService.verifyToken(query);
   }
 }

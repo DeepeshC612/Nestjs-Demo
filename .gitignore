@@ -3,6 +3,7 @@
 /node_modules
 /src/uploads
 /test-dynamodb.js
+.env
 
 # Logs
 logs

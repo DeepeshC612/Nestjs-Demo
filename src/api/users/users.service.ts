@@ -1,16 +1,19 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
 import { DeleteResult, Or, Repository } from 'typeorm';
 import { User } from '../../models/user.entity';
-import { provider } from '../../constant/provider';
 import { hashPassword, comparePass } from '../../constant/hashing';
 import { CreateUserDto, LoginUserDto } from '../../validation/user.validation';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MailService } from "../../services/mail/mail.service";
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) // provider.user
     private userRepository: Repository<User>,
+    private mailService: MailService,
+    private jwtService: JwtService,
   ) {}
 
   /**
@@ -39,7 +42,44 @@ export class UserService {
         req.password = await hashPassword(password);
         req.profilePic = profilePic?.path;
         await this.userRepository.insert(req);
+        await this.sendConfirmationMail(req.email);
         return { status: true, message: 'User created successfully' };
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  /**
+   * Delete user
+   * @req request
+   * @returns
+   */
+  async sendConfirmationMail(email: string): Promise<Boolean> {
+    try {
+      const getUser: User = await this.getUser(email)
+      if(getUser) {
+        const payload = { ...getUser }
+        const token = await this.jwtService.signAsync(payload)
+        await this.mailService.sendUserConfirmation(getUser, token)
+        return true
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Unable to send email',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } catch (error) {
       throw new HttpException(
@@ -114,6 +154,7 @@ export class UserService {
       }
       return user;
     } catch (error) {
+      console.log('error get user', error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
