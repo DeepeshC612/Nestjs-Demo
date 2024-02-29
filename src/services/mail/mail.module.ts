@@ -9,7 +9,7 @@ import { getEnv } from "../../constant/environment";
   imports: [
     MailerModule.forRoot({
       transport: {
-       host: getEnv("SMTP_HOST"),
+       host: getEnv("smtp_host"),
        port: +getEnv('smtp_port'),
         auth: {
           user: getEnv('smtp_username'),
