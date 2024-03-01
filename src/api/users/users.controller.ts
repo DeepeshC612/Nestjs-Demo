@@ -14,7 +14,7 @@ import {
   Req
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUserDto } from '../../validation/user.validation'
+import { CreateUserDto, ResetPasswordDto } from '../../validation/user.validation'
 import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -80,6 +80,20 @@ export class UserController {
   async forgetPassword(@Req() req: Request) {
     try {
       return await this.userService.forgetPassword(req);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
+
+  @Post('reset-password')
+  @UseGuards(AuthGuard)
+  @HttpCode(200)
+  async resetPassword(@Req() req: Request, @Body() body: ResetPasswordDto) {
+    try {
+      return await this.userService.resetPassword(req, body);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

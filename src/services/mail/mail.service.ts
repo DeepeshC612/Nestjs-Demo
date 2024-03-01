@@ -6,17 +6,21 @@ import { User } from './../../models/user.entity';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(user: User, token: string) {
-    const url = `http://localhost:3000/auth?token=${token}`;
+  async sendUserConfirmation(user: User, token: string, type: string) {
     try {
+      let context = {};
+      if(type == 'reset-pass') {
+        context['email'] = user?.email;
+      } else {
+          const url = `http://localhost:3000/auth?token=${token}`;
+          context['name'] = user?.name;
+          context['url'] = url
+        }
         await this.mailerService.sendMail({
           to: user.email,
-          subject: 'Please confirm you email',
-          template: './confirmation',
-          context: {
-            name: user.name,
-            url,
-          },
+          subject: type == 'reset-pass' ? 'Reset password confirmation' : 'Please confirm your email',
+          template: type == 'reset-pass' ? './password-reset-confirmation' : './confirmation',
+          context: context
         });
     } catch (err) {
         console.log("mail error", err)

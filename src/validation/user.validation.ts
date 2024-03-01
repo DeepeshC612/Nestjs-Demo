@@ -39,3 +39,12 @@ export class VerifyEmailDto {
   @ApiProperty()
   token: string
 }
+export class ResetPasswordDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  password: string
+
+  @IsNotEmpty()
+  @ApiProperty()
+  confirmPassword: string
+}

@@ -1,8 +1,9 @@
 import { HttpStatus, Injectable, Inject, HttpException } from '@nestjs/common';
-import { DeleteResult, Or, Repository } from 'typeorm';
+import { DeleteResult, Or, Repository, UpdateResult } from 'typeorm';
 import { User } from '../../models/user.entity';
-import { hashPassword, comparePass } from '../../constant/hashing';
-import { CreateUserDto, LoginUserDto } from '../../validation/user.validation';
+import { hashPassword } from '../../constant/hashing';
+import { EmailType } from "../../constant/constants";
+import { CreateUserDto, ResetPasswordDto } from '../../validation/user.validation';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from "../../services/mail/mail.service";
 import { JwtService } from '@nestjs/jwt';
@@ -70,7 +71,7 @@ export class UserService {
       if(getUser) {
         const payload = { ...getUser }
         const token = await this.jwtService.signAsync(payload)
-        await this.mailService.sendUserConfirmation(getUser, token)
+        await this.mailService.sendUserConfirmation(getUser, token, EmailType.CONFIRMATION)
         return true
       } else {
         throw new HttpException(
@@ -112,6 +113,56 @@ export class UserService {
           {
             status: false,
             error: 'Unable to send email.',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
+  /**
+   * Forget password email
+   * @req request
+   * @returns
+   */
+  async resetPassword(req: any, body: ResetPasswordDto): Promise<object> {
+    try {
+      if(body.password == body.confirmPassword) {
+        const newPassword = await hashPassword(body.password)
+        const result: UpdateResult = await this.userRepository
+        .createQueryBuilder()
+        .update()
+        .set({ password: newPassword })
+        .where('id = :id', { id: req?.user?.id })
+        .execute();
+        if(result.affected == 1) {
+          await this.mailService.sendUserConfirmation(req?.user, '', EmailType.RESETPASSWORD)
+          return { status: true, data: {}, message: 'Password reset successfully.' };
+        } else {
+          throw new HttpException(
+            {
+              status: false,
+              error: 'Error in resting password.',
+            },
+            HttpStatus.BAD_REQUEST,
+          );
+        }
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Both password should match.',
           },
           HttpStatus.BAD_REQUEST,
         );

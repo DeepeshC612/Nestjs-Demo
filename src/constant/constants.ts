@@ -23,6 +23,10 @@ export const cartSelect = [
   'user.name AS sellerName',
 ];
 
+export enum EmailType {
+  CONFIRMATION = 'confirmation',
+  RESETPASSWORD = 'reset-pass'
+}
 
 export enum UserRoles {
   ADMIN = 'admin',
