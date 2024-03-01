@@ -14,7 +14,7 @@ import {
   Req
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUserDto, ForgetPasswordDto, ResetPasswordDto } from '../../validation/user.validation'
+import { CreateUserDto, ForgetPasswordDto, ResetPasswordDto, UpdateProfileDto } from '../../validation/user.validation'
 import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -35,6 +35,23 @@ export class UserController {
   async postUser(@Body() req: CreateUserDto, @UploadedFile() profilePic: Express.Multer.File) {
     try {
       return await this.userService.postUser(req, profilePic);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
+
+  @Post('profile')
+  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('profilePic'))
+  @HttpCode(201)
+  async updateUser(@Body() body: UpdateProfileDto, @Req() req: Request, @UploadedFile() profilePic: Express.Multer.File) {
+    try {
+      return await this.userService.updateUser(body, req, profilePic);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

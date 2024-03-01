@@ -1,7 +1,6 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { User } from './../../models/user.entity';
-import { ForgetPasswordDto } from 'src/validation/user.validation';
 
 @Injectable()
 export class MailService {

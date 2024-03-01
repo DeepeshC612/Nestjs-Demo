@@ -1,6 +1,6 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, isNotEmpty } from 'class-validator';
 import { UserRoles } from 'src/constant/constants';
-import { ApiProperty, PickType, ApiPropertyOptional, } from '@nestjs/swagger';
+import { ApiProperty, PickType, ApiPropertyOptional, PartialType, } from '@nestjs/swagger';
 export class CreateUserDto {
   @IsEmail()
   @IsNotEmpty()
@@ -34,6 +34,7 @@ export class LoginUserDto extends PickType(CreateUserDto, [
   'password',
 ] as const) {}
 
+export class UpdateProfileDto extends PartialType(CreateUserDto) {}
 export class ForgetPasswordDto {
   @IsNotEmpty()
   @ApiProperty()
