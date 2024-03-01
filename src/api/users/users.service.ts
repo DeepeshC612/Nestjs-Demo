@@ -101,12 +101,12 @@ export class UserService {
    * @req request
    * @returns
    */
-  async forgetPassword(email: ForgetPasswordDto, req: any): Promise<object> {
+  async forgetPassword(body: ForgetPasswordDto, req: any): Promise<object> {
     try {
       if(req?.user) {
         const payload = { ...req?.user }
         const token = await this.jwtService.signAsync(payload)
-        await this.mailService.sendResetPasswordLink(email, token)
+        await this.mailService.sendResetPasswordLink(body?.email, token)
         return { status: true, message: 'Email send successfully.' };
       } else {
         throw new HttpException(

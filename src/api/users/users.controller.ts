@@ -77,9 +77,9 @@ export class UserController {
   @Post('forget-password')
   @UseGuards(UserExistsCheck)
   @HttpCode(200)
-  async forgetPassword(@Body() email: ForgetPasswordDto, @Req() req: Request) {
+  async forgetPassword(@Body() body: ForgetPasswordDto, @Req() req: Request) {
     try {
-      return await this.userService.forgetPassword(email, req);
+      return await this.userService.forgetPassword(body, req);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,
@@ -89,6 +89,7 @@ export class UserController {
   }
 
   @Post('reset-password')
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @HttpCode(200)
   async resetPassword(@Req() req: Request, @Body() body: ResetPasswordDto) {
