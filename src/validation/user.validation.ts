@@ -34,7 +34,23 @@ export class LoginUserDto extends PickType(CreateUserDto, [
   'password',
 ] as const) {}
 
-export class UpdateProfileDto extends PartialType(CreateUserDto) {}
+export class UpdateProfileDto {
+  @IsOptional()
+  @ApiPropertyOptional()
+  password: string;
+
+  @IsOptional()
+  @ApiPropertyOptional()
+  phoneNum: string;
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  profilePic: any;
+
+  @IsOptional()
+  @ApiPropertyOptional()
+  name: string;
+}
 export class ForgetPasswordDto {
   @IsNotEmpty()
   @ApiProperty()
