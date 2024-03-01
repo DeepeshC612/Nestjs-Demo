@@ -60,9 +60,9 @@ export class UserService {
   }
 
   /**
-   * Delete user
-   * @req request
-   * @returns
+   * Send confirmation email
+   * @email string
+   * @returns boolean
    */
   async sendConfirmationMail(email: string): Promise<Boolean> {
     try {
@@ -94,6 +94,42 @@ export class UserService {
       );
     }
   }
+
+  /**
+   * Forget password email
+   * @req request
+   * @returns
+   */
+  async forgetPassword(req: any): Promise<object> {
+    try {
+      if(req?.user) {
+        const payload = { ...req?.user }
+        const token = await this.jwtService.signAsync(payload)
+        await this.mailService.sendResetPasswordLink(req?.user?.email, token)
+        return { status: true, message: 'Email send successfully.' };
+      } else {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Unable to send email.',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+
   /**
    * Delete user
    * @req request
@@ -154,7 +190,6 @@ export class UserService {
       }
       return user;
     } catch (error) {
-      console.log('error get user', error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,

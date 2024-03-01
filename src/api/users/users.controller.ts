@@ -21,6 +21,7 @@ import { Roles } from 'src/decorators/roles.decorator';
 import { UserRoles } from 'src/constant/constants';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from 'src/auth/roles.guard';
+import { UserExistsCheck } from 'src/middlewares/checkUserExistsMiddleware';
 
 @Controller('user')
 @ApiTags('accounts')
@@ -65,6 +66,20 @@ export class UserController {
   async getUser(@Query('email') email: string) {
     try {
       return await this.userService.getUser(email);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
+
+  @Post('forget-password')
+  @UseGuards(UserExistsCheck)
+  @HttpCode(200)
+  async forgetPassword(@Req() req: Request) {
+    try {
+      return await this.userService.forgetPassword(req);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,
