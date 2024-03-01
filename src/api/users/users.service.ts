@@ -3,7 +3,7 @@ import { DeleteResult, Or, Repository, UpdateResult } from 'typeorm';
 import { User } from '../../models/user.entity';
 import { hashPassword } from '../../constant/hashing';
 import { EmailType } from "../../constant/constants";
-import { CreateUserDto, ResetPasswordDto } from '../../validation/user.validation';
+import { CreateUserDto, ForgetPasswordDto, ResetPasswordDto } from '../../validation/user.validation';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from "../../services/mail/mail.service";
 import { JwtService } from '@nestjs/jwt';
@@ -101,12 +101,12 @@ export class UserService {
    * @req request
    * @returns
    */
-  async forgetPassword(req: any): Promise<object> {
+  async forgetPassword(email: ForgetPasswordDto, req: any): Promise<object> {
     try {
       if(req?.user) {
         const payload = { ...req?.user }
         const token = await this.jwtService.signAsync(payload)
-        await this.mailService.sendResetPasswordLink(req?.user?.email, token)
+        await this.mailService.sendResetPasswordLink(email, token)
         return { status: true, message: 'Email send successfully.' };
       } else {
         throw new HttpException(

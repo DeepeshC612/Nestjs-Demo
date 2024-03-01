@@ -1,6 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { User } from './../../models/user.entity';
+import { ForgetPasswordDto } from 'src/validation/user.validation';
 
 @Injectable()
 export class MailService {
@@ -26,7 +27,7 @@ export class MailService {
         console.log("mail error", err)
     }
   }
-  async sendResetPasswordLink(email: string, token: string) {
+  async sendResetPasswordLink(email: any, token: string) {
     const url = `http://localhost:5186/reset-password?token=${token}`;
     try {
         await this.mailerService.sendMail({

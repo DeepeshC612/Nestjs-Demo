@@ -34,6 +34,12 @@ export class LoginUserDto extends PickType(CreateUserDto, [
   'password',
 ] as const) {}
 
+export class ForgetPasswordDto {
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string;
+}
+
 export class VerifyEmailDto {
   @IsNotEmpty()
   @ApiProperty()

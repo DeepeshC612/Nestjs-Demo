@@ -14,7 +14,7 @@ import {
   Req
 } from '@nestjs/common';
 import { UserService } from './users.service';
-import { CreateUserDto, ResetPasswordDto } from '../../validation/user.validation'
+import { CreateUserDto, ForgetPasswordDto, ResetPasswordDto } from '../../validation/user.validation'
 import { AuthGuard } from "../../auth/auth.guard";
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles } from 'src/decorators/roles.decorator';
@@ -77,9 +77,9 @@ export class UserController {
   @Post('forget-password')
   @UseGuards(UserExistsCheck)
   @HttpCode(200)
-  async forgetPassword(@Req() req: Request) {
+  async forgetPassword(@Body() email: ForgetPasswordDto, @Req() req: Request) {
     try {
-      return await this.userService.forgetPassword(req);
+      return await this.userService.forgetPassword(email, req);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,
