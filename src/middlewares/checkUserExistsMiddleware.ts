@@ -18,10 +18,10 @@ export class UserExistsCheck implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     try {
-      const isExists: User = await this.userRepository.findOne({
-        where: { email: request?.body?.email },
-      });
-      if (!isExists) {
+        const isExists: User = await this.userRepository.findOne({
+            where: { email: request?.body?.email },
+        });
+        if (!isExists) {
         throw new ForbiddenException({
           status: false,
           message: 'User not found with this email address.',
@@ -31,7 +31,7 @@ export class UserExistsCheck implements CanActivate {
     } catch {
       throw new ForbiddenException({
         status: false,
-        message: 'User not found.',
+        message: 'User not found with this email address.',
       });
     }
     return true;
