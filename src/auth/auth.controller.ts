@@ -1,4 +1,14 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, Query, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  Query,
+  Get,
+  HttpException,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, VerifyEmailDto } from 'src/validation/user.validation';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,7 +26,14 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('verify-otp')
-  verifyOtp(@Body() body: VerifyEmailDto) {
-    return this.authService.verifyOtp(body);
+  async verifyOtp(@Body() body: VerifyEmailDto) {
+    try {
+      return await this.authService.verifyOtp(body);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
   }
 }
