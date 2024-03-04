@@ -7,6 +7,7 @@ import { CreateUserDto, ForgetPasswordDto, ResetPasswordDto, UpdateProfileDto } 
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from "../../services/mail/mail.service";
 import { JwtService } from '@nestjs/jwt';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
@@ -15,6 +16,7 @@ export class UserService {
     private userRepository: Repository<User>,
     private mailService: MailService,
     private jwtService: JwtService,
+    private authService: AuthService,
   ) {}
 
   /**
@@ -148,6 +150,7 @@ export class UserService {
         .execute();
         if(result.affected == 1) {
           await this.mailService.sendUserConfirmation(req?.user, '', EmailType.RESETPASSWORD)
+          this.authService.addToBlacklist(req?.token)
           return { status: true, data: {}, message: 'Password reset successfully.' };
         } else {
           throw new HttpException(
