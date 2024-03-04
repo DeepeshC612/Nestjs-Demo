@@ -21,6 +21,9 @@ export class User {
   @Column({ length: 20 })
   phoneNum: string;
 
+  @Column({ default: 0 })
+  emailOtp: number;
+
   @Column({ type: 'boolean', default: false })
   isVerified: boolean;
 

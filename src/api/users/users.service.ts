@@ -74,11 +74,14 @@ export class UserService {
     try {
       const getUser: User = await this.getUser(email);
       if (getUser) {
-        const payload = { ...getUser };
-        const token = await this.jwtService.signAsync(payload);
+        const otp = Math.floor(100000 + Math.random() * 900000);
+        await this.userRepository.update(
+          { id: getUser?.id },
+          { emailOtp: otp },
+        );
         await this.mailService.sendUserConfirmation(
           getUser,
-          token,
+          otp,
           EmailType.CONFIRMATION,
         );
         return true;
@@ -162,7 +165,7 @@ export class UserService {
         if (result.affected == 1) {
           await this.mailService.sendUserConfirmation(
             req?.user,
-            '',
+            0,
             EmailType.RESETPASSWORD,
           );
           await this.userRepository.update(

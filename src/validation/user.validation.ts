@@ -32,6 +32,9 @@ export class CreateUserDto {
 
   @IsOptional()
   resetPasswordToken: string;
+
+  @IsOptional()
+  emailOtp: number;
 }
 
 export class LoginUserDto extends PickType(CreateUserDto, [
@@ -65,7 +68,12 @@ export class ForgetPasswordDto {
 export class VerifyEmailDto {
   @IsNotEmpty()
   @ApiProperty()
-  token: string
+  otp: number
+
+  @IsEmail()
+  @IsNotEmpty()
+  @ApiProperty()
+  email: string
 }
 export class ResetPasswordDto {
   @IsNotEmpty()

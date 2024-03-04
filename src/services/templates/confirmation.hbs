@@ -26,17 +26,6 @@
             color: #666;
             margin-bottom: 20px;
         }
-        a {
-            display: inline-block;
-            background-color: #007bff;
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-        a:hover {
-            background-color: #0056b3;
-        }
     </style>
 </head>
 
@@ -44,17 +33,12 @@
     <div class='container'>
         <h1>Please Confirm Your Email</h1>
         <p>
-            Thank you for signing up
-            {{name}}! 
-            To complete your registration, please click the link below to
-            confirm your email address:
+            Thank you for signing up, {{name}}! 
+            To complete your registration, please use the following verification code:
         </p>
+        <h2>{{otp}}</h2>
         <p>
-            <a href='{{url}}'>Confirm Email</a>
-        </p>
-        <p>
-            If you didn't sign up for this service, you can safely ignore this
-            email.
+            If you didn't sign up for this service, you can safely ignore this email.
         </p>
     </div>
 </body>

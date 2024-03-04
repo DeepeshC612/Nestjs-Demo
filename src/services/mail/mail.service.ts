@@ -6,15 +6,14 @@ import { User } from './../../models/user.entity';
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(user: User, token: string, type: string) {
+  async sendUserConfirmation(user: User, otp: number, type: string) {
     try {
       let context = {};
       if(type == 'reset-pass') {
         context['email'] = user?.email;
       } else {
-          const url = `http://localhost:3000/confirm-email?token=${token}`;
           context['name'] = user?.name;
-          context['url'] = url
+          context['otp'] = otp;
         }
         await this.mailerService.sendMail({
           to: user.email,

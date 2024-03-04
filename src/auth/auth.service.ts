@@ -33,19 +33,14 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
-  async verifyToken(query: VerifyEmailDto): Promise<object> {
+  async verifyOtp(body: VerifyEmailDto): Promise<object> {
     try {
-      const { token } =  query;
-      const payload = await this.jwtService.verifyAsync(
-        token,
-        {
-          secret: getEnv('jwt_secret')
-        }
-      );
-      if(payload) {
+      const { otp, email } =  body;
+      const getUser = await this.usersService.getUser(email)
+      if(getUser?.emailOtp == otp) {
         return {
           status: true,
-          data: payload?.email,
+          data: getUser?.email,
           message: "Your email is verified successfully"
         };
       } else {
