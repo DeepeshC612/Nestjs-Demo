@@ -15,7 +15,12 @@ export class AuthService {
     private usersService: UserService,
     private jwtService: JwtService,
   ) {}
-
+  /**
+   * User login
+   * @param email 
+   * @param pass 
+   * @returns 
+   */
   async signIn(
     email: string,
     pass: string,
@@ -38,6 +43,12 @@ export class AuthService {
       access_token: await this.jwtService.signAsync(payload),
     };
   }
+
+  /**
+   * Verify email otp
+   * @param body 
+   * @returns 
+   */
   async verifyOtp(body: VerifyEmailDto): Promise<object> {
     try {
       const { otp, email } = body;
