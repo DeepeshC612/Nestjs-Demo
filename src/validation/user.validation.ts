@@ -24,9 +24,14 @@ export class CreateUserDto {
   name: string;
 
   @IsOptional()
-  @ApiPropertyOptional({ enum: UserRoles, default: UserRoles.USER })
   @IsEnum(UserRoles)
   role: UserRoles;
+
+  @IsOptional()
+  isVerified: boolean;
+
+  @IsOptional()
+  resetPasswordToken: string;
 }
 
 export class LoginUserDto extends PickType(CreateUserDto, [

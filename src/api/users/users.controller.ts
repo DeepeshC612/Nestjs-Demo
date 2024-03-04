@@ -22,6 +22,7 @@ import { UserRoles } from 'src/constant/constants';
 import { ApiBearerAuth, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { RolesGuard } from 'src/auth/roles.guard';
 import { UserExistsCheck } from 'src/middlewares/checkUserExistsMiddleware';
+import { ResetPassGuard } from 'src/middlewares/resetPasswordTokenMiddleware';
 
 @Controller('user')
 @ApiTags('accounts')
@@ -107,7 +108,7 @@ export class UserController {
 
   @Post('reset-password')
   @ApiBearerAuth()
-  @UseGuards(AuthGuard)
+  @UseGuards(ResetPassGuard)
   @HttpCode(200)
   async resetPassword(@Req() req: Request, @Body() body: ResetPasswordDto) {
     try {

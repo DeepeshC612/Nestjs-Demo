@@ -21,6 +21,12 @@ export class User {
   @Column({ length: 20 })
   phoneNum: string;
 
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean;
+
+  @Column({ default: null })
+  resetPasswordToken: string;
+
   @Column({ type: 'enum', enum: UserRoles, default: UserRoles.USER })
   role: UserRoles;
 

@@ -7,20 +7,16 @@ import {
   import { JwtService } from '@nestjs/jwt';
   import { getEnv } from '../constant/environment';
   import { Request } from 'express';
-  import { AuthService } from './auth.service';
   
   @Injectable()
   export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtService, private authService: AuthService) {}
+    constructor(private jwtService: JwtService) {}
   
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
       if (!token) {
         throw new UnauthorizedException();
-      }
-      if(this.authService.isTokenBlacklisted(token)) {
-        throw new UnauthorizedException('Invalid token');
       }
       try {
         const payload = await this.jwtService.verifyAsync(

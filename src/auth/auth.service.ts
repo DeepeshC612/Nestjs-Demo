@@ -10,7 +10,6 @@ export class AuthService {
     private usersService: UserService,
     private jwtService: JwtService,
   ) {}
-  private readonly blacklist: Set<string> = new Set();
 
   async signIn(
     email: string,
@@ -62,11 +61,5 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-  }
-  addToBlacklist(token: string): void {
-    this.blacklist.add(token);
-  }
-  isTokenBlacklisted(token: string): boolean {
-    return this.blacklist.has(token);
   }
 }
