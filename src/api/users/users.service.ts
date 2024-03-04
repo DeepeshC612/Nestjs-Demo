@@ -357,6 +357,30 @@ export class UserService {
     }
   }
   /**
+   * update user
+   * @params data
+   * @returns
+   */
+  async update(id: number, data: object): Promise<boolean> {
+    try {
+      const result: UpdateResult = await this.userRepository.update({ id: id }, data);
+      if (result.affected == 1) {
+        return true;
+      }
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+  /**
    * Find one user
    * @request email
    * @returns

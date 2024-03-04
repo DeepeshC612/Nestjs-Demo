@@ -15,7 +15,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('verify-otp')
+  @Post('verify-otp')
   verifyOtp(@Body() body: VerifyEmailDto) {
     return this.authService.verifyOtp(body);
   }

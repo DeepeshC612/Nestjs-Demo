@@ -38,6 +38,7 @@ export class AuthService {
       const { otp, email } =  body;
       const getUser = await this.usersService.getUser(email)
       if(getUser?.emailOtp == otp) {
+        await this.usersService.update(getUser?.id, { isVerified: true })
         return {
           status: true,
           data: getUser?.email,
