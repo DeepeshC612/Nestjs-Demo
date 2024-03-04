@@ -24,7 +24,7 @@ export class User {
   @Column({ type: 'boolean', default: false })
   isVerified: boolean;
 
-  @Column({ default: null })
+  @Column({ default: null, length: 2000 })
   resetPasswordToken: string;
 
   @Column({ type: 'enum', enum: UserRoles, default: UserRoles.USER })

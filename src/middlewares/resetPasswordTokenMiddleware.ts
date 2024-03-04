@@ -44,7 +44,7 @@ export class ResetPassGuard implements CanActivate {
     } catch {
       throw new ForbiddenException({
         status: false,
-        message: 'User not found with this email address.',
+        message: 'Invalid token.',
       });
     }
     return true;
