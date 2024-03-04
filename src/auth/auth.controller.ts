@@ -4,10 +4,7 @@ import {
   Post,
   HttpCode,
   HttpStatus,
-  Query,
-  Get,
   HttpException,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto, VerifyEmailDto } from 'src/validation/user.validation';

@@ -2,12 +2,10 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from '../api/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { comparePass } from '../constant/hashing';
-import { getEnv } from '../constant/environment';
 import { VerifyEmailDto } from 'src/validation/user.validation';
 @Injectable()
 export class AuthService {
