@@ -17,8 +17,15 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: LoginUserDto) {
-    return this.authService.signIn(signInDto.email, signInDto.password);
+  async signIn(@Body() signInDto: LoginUserDto) {
+    try {
+     return await this.authService.signIn(signInDto.email, signInDto.password);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
   }
 
   @HttpCode(HttpStatus.OK)

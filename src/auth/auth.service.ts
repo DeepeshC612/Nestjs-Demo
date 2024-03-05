@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from '../api/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { comparePass } from '../constant/hashing';
@@ -15,37 +11,59 @@ export class AuthService {
   ) {}
   /**
    * User login
-   * @param email 
-   * @param pass 
-   * @returns 
+   * @param email
+   * @param pass
+   * @returns
    */
   async signIn(
     email: string,
     pass: string,
   ): Promise<{ access_token: string; data: object }> {
-    const user = await this.usersService.findOneUser(email);
-    const passCheck = await comparePass(pass, user?.password);
-    if (!passCheck) {
+    try {
+      const user = await this.usersService.findOneUser(email);
+      if (!user) {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'User not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      const passCheck = await comparePass(pass, user?.password);
+      if (!passCheck) {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Invalid credentials',
+          },
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+      const payload = { ...user };
+      delete user?.password;
+      return {
+        data: user,
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    } catch (error) {
       throw new HttpException(
         {
           status: false,
-          error: 'Invalid credentials',
+          error: 'Internal server error',
         },
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
       );
     }
-    const payload = { ...user };
-    delete user?.password;
-    return {
-      data: user,
-      access_token: await this.jwtService.signAsync(payload),
-    };
   }
 
   /**
    * Verify email otp
-   * @param body 
-   * @returns 
+   * @param body
+   * @returns
    */
   async verifyOtp(body: VerifyEmailDto): Promise<object> {
     try {

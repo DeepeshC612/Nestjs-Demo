@@ -363,7 +363,10 @@ export class UserService {
    */
   async update(id: number, data: object): Promise<boolean> {
     try {
-      const result: UpdateResult = await this.userRepository.update({ id: id }, data);
+      const result: UpdateResult = await this.userRepository.update(
+        { id: id },
+        data,
+      );
       if (result.affected == 1) {
         return true;
       }
@@ -390,17 +393,15 @@ export class UserService {
       const user: User = await this.userRepository.findOne({
         where: { email: email },
       });
-      if (!user) {
-        throw new HttpException(
-          {
-            status: false,
-            error: 'User not found',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      // if (!user) {
+      //   return {
+      //     status: false,
+      //     error: 'User not found',
+      //   };
+      // }
       return user;
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
