@@ -18,7 +18,7 @@ export class AuthService {
   async signIn(
     email: string,
     pass: string,
-  ): Promise<{ access_token: string; data: object }> {
+  ): Promise<{ access_token: string; data: object, status: boolean }> {
     try {
       const user = await this.usersService.findOneUser(email);
       if (!user) {
@@ -43,6 +43,7 @@ export class AuthService {
       const payload = { ...user };
       delete user?.password;
       return {
+        status: true,
         data: user,
         access_token: await this.jwtService.signAsync(payload),
       };
