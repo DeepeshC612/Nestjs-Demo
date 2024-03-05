@@ -393,12 +393,6 @@ export class UserService {
       const user: User = await this.userRepository.findOne({
         where: { email: email },
       });
-      // if (!user) {
-      //   return {
-      //     status: false,
-      //     error: 'User not found',
-      //   };
-      // }
       return user;
     } catch (error) {
       console.log(error);
