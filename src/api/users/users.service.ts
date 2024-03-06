@@ -123,7 +123,7 @@ export class UserService {
           { resetPasswordToken: token },
         );
         await this.mailService.sendResetPasswordLink(body?.email, token);
-        return { status: true, message: 'Email send successfully.' };
+        return { status: true, message: 'Email send successfully, check your inbox.' };
       } else {
         throw new HttpException(
           {
