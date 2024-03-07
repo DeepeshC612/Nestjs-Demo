@@ -12,6 +12,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from '../../services/mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
+import { getEnv } from 'src/constant/environment';
 
 @Injectable()
 export class UserService {
@@ -46,7 +47,7 @@ export class UserService {
         );
       } else {
         req.password = await hashPassword(password);
-        req.profilePic = profilePic?.path;
+        req.profilePic = `http://localhost:${getEnv('port')}/src/uploads/${profilePic?.filename}`;
         await this.userRepository.insert(req);
         await this.sendConfirmationMail(req.email);
         return { status: true, message: 'User created successfully' };
@@ -235,7 +236,7 @@ export class UserService {
         updateProperties['phoneNum'] = phoneNum;
       }
       if (profilePic) {
-        updateProperties['profilePic'] = profilePic?.path;
+        updateProperties['profilePic'] = `http://localhost:${getEnv('port')}/src/uploads/${profilePic?.filename}`;
       }
       const isNumExists = await this.userRepository.findOne({
         where: { phoneNum: phoneNum },

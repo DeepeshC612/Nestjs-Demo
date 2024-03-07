@@ -7,6 +7,7 @@ import {
   QueryProductDto,
   UpdateProductDto,
 } from '../../validation/product.validation';
+import { getEnv } from 'src/constant/environment';
 @Injectable()
 export class ProductService {
   constructor(
@@ -34,7 +35,7 @@ export class ProductService {
         );
       } else {
         body.user = req?.user?.id;
-        body.image = image?.path;
+        body.image = `http://localhost:${getEnv('port')}/src/uploads/${image?.filename}`;
         await this.productRepository.insert(body);
         return {
           status: true,
@@ -78,7 +79,7 @@ export class ProductService {
         updateProperties['productName'] = productName;
       }
       if(image) {
-        updateProperties['image'] = image?.path
+        updateProperties['image'] = `http://localhost:${getEnv('port')}/src/uploads/${image?.filename}`
       }
       const result: UpdateResult = await this.productRepository
         .createQueryBuilder()
