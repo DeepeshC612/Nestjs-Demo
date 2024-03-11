@@ -19,35 +19,30 @@ export class CartService {
   async addToCart(body: any, req: any): Promise<object> {
     try {
       const isProductExists = await this.cartRepository
-        .createQueryBuilder('cart')
-        .where('cart.product = :productId AND cart.user = :userId', {
-          productId: body.productId,
+      .createQueryBuilder('cart')
+      .where('cart.product = :productId AND cart.user = :userId', {
+        productId: body.productId,
           userId: req.user.id,
         })
         .getRawOne();
-      if (isProductExists) {
-        console.log('is', isProductExists);
-        await this.cartRepository
+        if (isProductExists) {
+          await this.cartRepository
           .createQueryBuilder()
           .update()
           .set({ quantity: isProductExists.cart_quantity + body.quantity })
           .where('id = :cartId', { cartId: isProductExists.cart_id })
           .execute();
+        } else {
+          body.user = req.user.id;
+          body.product = body.productId;
+          await this.cartRepository.insert(body);
+        }
+        const data = await this.cartList(req);
         return {
-          status: true,
-          data: {},
-          message: 'Product added to cart successfully',
-        };
-      } else {
-        body.user = req.user.id;
-        body.product = body.productId;
-        await this.cartRepository.insert(body);
-        return {
-          status: true,
-          data: {},
-          message: 'Product added to cart successfully',
-        };
-      }
+        status: true,
+        data: data,
+        message: 'Product added to cart successfully',
+      };
     } catch (error) {
       throw new HttpException(
         {
@@ -67,9 +62,7 @@ export class CartService {
    * @req request
    * @returns
    */
-  async cartRemove(
-    req: any,
-  ): Promise<object> {
+  async cartRemove(req: any): Promise<object> {
     try {
       const cart = await this.cartRepository
         .createQueryBuilder('cart')
@@ -80,7 +73,11 @@ export class CartService {
         })
         .execute();
       if (cart) {
-        return { status: true, data: {}, message: 'Product removed successfully.' };
+        return {
+          status: true,
+          data: {},
+          message: 'Product removed successfully.',
+        };
       } else {
         throw new HttpException(
           {
@@ -109,9 +106,7 @@ export class CartService {
    * @req request
    * @returns
    */
-  async cartList(
-    req: any,
-  ): Promise<object> {
+  async cartList(req: any): Promise<object> {
     try {
       const cart = await this.cartRepository
         .createQueryBuilder('cart')

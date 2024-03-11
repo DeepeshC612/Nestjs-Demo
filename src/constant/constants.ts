@@ -4,6 +4,7 @@ export const productSelect = [
   'product.price AS price',
   'product.image AS image',
   'product.description AS description',
+  'product.quantity AS quantity',
   'user.id AS userId',
   'user.name AS userName',
   'user.email AS userEmail',

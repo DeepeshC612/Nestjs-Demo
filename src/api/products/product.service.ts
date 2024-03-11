@@ -36,10 +36,11 @@ export class ProductService {
       } else {
         body.user = req?.user?.id;
         body.image = `http://localhost:${getEnv('port')}/src/uploads/${image?.filename}`;
-        await this.productRepository.insert(body);
+        const data = await this.productRepository.insert(body);
+        const getProduct = await this.productDetails(data.identifiers[0]?.id)
         return {
           status: true,
-          data: {},
+          data: getProduct?.data,
           message: 'Product added successfully',
         };
       }
@@ -88,9 +89,10 @@ export class ProductService {
         .where('id = :productId', { productId: id })
         .execute();
       if (result.affected == 1) {
+        const res = await this.productDetails(id)
         return {
           status: true,
-          data: {},
+          data: res?.data,
           message: 'Product updated successfully',
         };
       } else {
@@ -182,7 +184,7 @@ export class ProductService {
    */
   async productDetails(
     id: number,
-  ): Promise<object> {
+  ): Promise<{status: boolean, data: object, message: string}> {
     try {
       const product = await this.productRepository
         .createQueryBuilder('product')
