@@ -37,10 +37,10 @@ export class CartService {
           body.product = body.productId;
           await this.cartRepository.insert(body);
         }
-        const data = await this.cartList(req);
+        const cartData = await this.cartList(req);
         return {
         status: true,
-        data: data,
+        data: cartData?.data,
         message: 'Product added to cart successfully',
       };
     } catch (error) {
@@ -106,7 +106,7 @@ export class CartService {
    * @req request
    * @returns
    */
-  async cartList(req: any): Promise<object> {
+  async cartList(req: any): Promise<{ status: boolean, data: object, message: string }> {
     try {
       const cart = await this.cartRepository
         .createQueryBuilder('cart')
