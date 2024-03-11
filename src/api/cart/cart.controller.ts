@@ -43,7 +43,7 @@ export class CartController {
 
   @Get('')
   @Roles([UserRoles.USER])
-  @UseGuards(RolesGuard, middlewares.EmptyCartCheck)
+  @UseGuards(RolesGuard) // middlewares.EmptyCartCheck removed for frontend
   @HttpCode(200)
   async cartList(@Req() req: Request) {
     try {

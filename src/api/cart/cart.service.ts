@@ -26,12 +26,22 @@ export class CartService {
         })
         .getRawOne();
         if (isProductExists) {
-          await this.cartRepository
-          .createQueryBuilder()
-          .update()
-          .set({ quantity: isProductExists.cart_quantity + body.quantity })
-          .where('id = :cartId', { cartId: isProductExists.cart_id })
-          .execute();
+          if(isProductExists.cart_quantity + body.quantity == 0) {
+            await this.cartRepository.createQueryBuilder('cart')
+            .delete()
+            .where('cart.userId = :userId AND cart.productId = :productId', {
+              userId: req?.user?.id,
+              productId: isProductExists?.cart_productId,
+            })
+            .execute();
+          } else {
+            await this.cartRepository
+            .createQueryBuilder()
+            .update()
+            .set({ quantity: isProductExists.cart_quantity + body.quantity })
+            .where('id = :cartId', { cartId: isProductExists.cart_id })
+            .execute();
+          }
         } else {
           body.user = req.user.id;
           body.product = body.productId;
@@ -120,13 +130,7 @@ export class CartService {
       if (cart) {
         return { status: true, data: cart, message: 'Cart list.' };
       } else {
-        throw new HttpException(
-          {
-            status: false,
-            error: 'Cart not found',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
+        return { status: false, data: [], message: "Cart is empty"}
       }
     } catch (error) {
       throw new HttpException(
