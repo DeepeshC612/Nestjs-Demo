@@ -83,9 +83,10 @@ export class CartService {
         })
         .execute();
       if (cart) {
+        let cartData = await this.cartList(req)
         return {
           status: true,
-          data: {},
+          data: cartData?.data,
           message: 'Product removed successfully.',
         };
       } else {

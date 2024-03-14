@@ -13,6 +13,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MailService } from '../../services/mail/mail.service';
 import { JwtService } from '@nestjs/jwt';
 import { getEnv } from 'src/constant/environment';
+const rps = require("rps-random-password-generator");
 
 @Injectable()
 export class UserService {
@@ -47,7 +48,9 @@ export class UserService {
         );
       } else {
         req.password = await hashPassword(password);
-        req.profilePic = `http://localhost:${getEnv('port')}/src/uploads/${profilePic?.filename}`;
+        req.profilePic = `http://localhost:${getEnv(
+          'port',
+        )}/src/uploads/${profilePic?.filename}`;
         await this.userRepository.insert(req);
         await this.sendConfirmationMail(req.email);
         return { status: true, message: 'User created successfully' };
@@ -75,7 +78,15 @@ export class UserService {
     try {
       const getUser: User = await this.getUser(email);
       if (getUser) {
-        const otp = Math.floor(100000 + Math.random() * 900000);
+        const otp = rps.generatePassword({
+          length: 6,
+          pattern: {
+            upperCase: false,
+            lowerCase: false,
+            specialCharacter: false,
+            numeric: true,
+          },
+        });
         await this.userRepository.update(
           { id: getUser?.id },
           { emailOtp: otp },
@@ -124,7 +135,10 @@ export class UserService {
           { resetPasswordToken: token },
         );
         await this.mailService.sendResetPasswordLink(body?.email, token);
-        return { status: true, message: 'Email send successfully, check your inbox.' };
+        return {
+          status: true,
+          message: 'Email send successfully, check your inbox.',
+        };
       } else {
         throw new HttpException(
           {
@@ -236,7 +250,9 @@ export class UserService {
         updateProperties['phoneNum'] = phoneNum;
       }
       if (profilePic) {
-        updateProperties['profilePic'] = `http://localhost:${getEnv('port')}/src/uploads/${profilePic?.filename}`;
+        updateProperties['profilePic'] = `http://localhost:${getEnv(
+          'port',
+        )}/src/uploads/${profilePic?.filename}`;
       }
       const isNumExists = await this.userRepository.findOne({
         where: { phoneNum: phoneNum },
