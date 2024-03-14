@@ -114,6 +114,7 @@ export class ProductController {
     try {
       return await this.productService.productDelete(id);
     } catch (error) {
+      console.log(error)
       throw new HttpException(
         error?.cause?.response ?? error?.response,
         error?.cause?.status ?? error?.response?.status,

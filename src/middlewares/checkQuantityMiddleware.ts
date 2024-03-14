@@ -2,6 +2,8 @@ import {
   BadRequestException,
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -30,16 +32,22 @@ export class QuantityCheck implements CanActivate {
         isExists?.product_quantity < request?.body?.quantity ||
         isExists?.cart_quantity >= isExists?.product_quantity
       ) {
-        throw new BadRequestException({
-          status: false,
-          message: 'Product quantity is not sufficient or out of stock',
-        });
+        throw new HttpException(
+          {
+            status: HttpStatus.OK,
+            message: 'Product quantity is not sufficient or out of stock',
+          },
+          HttpStatus.OK,
+        );
       }
     } catch {
-      throw new BadRequestException({
-        status: false,
-        message: 'Product quantity is not sufficient or out of stock',
-      });
+      throw new HttpException(
+        {
+          status: HttpStatus.OK,
+          message: 'Product quantity is not sufficient or out of stock',
+        },
+        HttpStatus.OK,
+      );
     }
     return true;
   }
