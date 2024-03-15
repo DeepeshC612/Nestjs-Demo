@@ -30,7 +30,8 @@ export class QuantityCheck implements CanActivate {
         .getRawOne();
       if (
         isExists?.product_quantity < request?.body?.quantity ||
-        isExists?.cart_quantity > isExists?.product_quantity
+        isExists?.cart_quantity > isExists?.product_quantity ||
+        request?.body?.quantity + isExists?.cart_quantity > isExists?.product_quantity
       ) {
         throw new HttpException(
           {
