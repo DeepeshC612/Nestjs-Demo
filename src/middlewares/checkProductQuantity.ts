@@ -23,6 +23,7 @@ export class ProductQuantityCheck implements CanActivate {
         return this.productRepository
           .createQueryBuilder('')
           .addSelect(`(price * ${item?.quantity}) AS totalPrice`)
+          .addSelect(`(quantity - ${item?.quantity}) AS remainingQuantity`)
           .addSelect(
             `CASE WHEN ${item?.quantity} > quantity THEN true ELSE false END AS outOfStock`,
           )
@@ -34,14 +35,22 @@ export class ProductQuantityCheck implements CanActivate {
     );
     const result = await Promise.all(query);
     let totalPrice = 0;
+    let remainingQuantity = [];
     let outOfStock = false;
     result?.map((e) => {
       totalPrice += +e?.totalPrice;
+      remainingQuantity.push({
+        productId: e?.Product_id,
+        remainingQuantity: +e?.remainingQuantity,
+      });
       if (e?.outOfStock) {
         outOfStock = true;
       }
     });
-    request.totalPrice = totalPrice;
+    request.product = {
+      totalPrice: totalPrice,
+      remainingQuantity: remainingQuantity,
+    };
     if (outOfStock) {
       throw new HttpException(
         {

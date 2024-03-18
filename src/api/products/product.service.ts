@@ -63,7 +63,7 @@ export class ProductService {
    * @req request
    * @returns
    */
-  async updateProduct(body: UpdateProductDto, id: number, image: Express.Multer.File): Promise<object> {
+  async updateProduct(body: UpdateProductDto, id: number, image: any): Promise<object> {
     try {
       const { description, price, productName, quantity } = body;
       let updateProperties = {};

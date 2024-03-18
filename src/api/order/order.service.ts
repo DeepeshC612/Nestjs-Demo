@@ -25,7 +25,7 @@ export class OrderService {
     try {
       const payload = {
         user: req?.user?.id,
-        totalPrice: req?.totalPrice
+        totalPrice: req?.product?.totalPrice
       };
       const order = await this.orderRepository.save(payload);
       for (const item of body?.products) {
@@ -35,6 +35,8 @@ export class OrderService {
           order: order?.id as unknown as (() => string),
         };
         await this.orderProductRepository.insert(payload)
+        const newQuantity = req?.product?.remainingQuantity?.find((e) => e?.productId == item?.productId)
+        await this.productService.updateProduct({quantity: newQuantity?.remainingQuantity}, item?.productId, "")
       }
       return {
         status: true,
