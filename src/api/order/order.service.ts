@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/models/order.entity';
 import { OrderProduct } from 'src/models/order.product.entity';
+import { ProductService } from '../products/product.service';
 // import { cartSelect } from 'src/constant/constants';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class OrderService {
     private orderRepository: Repository<Order>,
     @InjectRepository(OrderProduct)
     private orderProductRepository: Repository<OrderProduct>,
+    private productService: ProductService
   ) {}
 
   /**
@@ -23,6 +25,7 @@ export class OrderService {
     try {
       const payload = {
         user: req?.user?.id,
+        totalPrice: req?.totalPrice
       };
       const order = await this.orderRepository.save(payload);
       for (const item of body?.products) {
