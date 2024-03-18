@@ -7,9 +7,10 @@ import { ProductModule } from './api/products/product.module';
 import databaseConfig from "./config/database";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CartModule } from './api/cart/cart.module';
+import { OrderModule } from './api/order/order.module';
 @Module({
   controllers: [AppController],
-  imports: [TypeOrmModule.forRoot(databaseConfig), UserModule, AuthModule, ProductModule, CartModule], //DataBaseModule
+  imports: [TypeOrmModule.forRoot(databaseConfig), UserModule, AuthModule, ProductModule, CartModule, OrderModule], //DataBaseModule
   providers: [AppService],
 })
 export class AppModule {}
