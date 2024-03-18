@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from 'src/models/order.entity';
 import { OrderProduct } from 'src/models/order.product.entity';
 import { ProductService } from '../products/product.service';
+import { DbTransaction } from '../../config/transaction'
 // import { cartSelect } from 'src/constant/constants';
 
 @Injectable()
@@ -13,7 +14,8 @@ export class OrderService {
     private orderRepository: Repository<Order>,
     @InjectRepository(OrderProduct)
     private orderProductRepository: Repository<OrderProduct>,
-    private productService: ProductService
+    private productService: ProductService,
+    private dbTransaction: DbTransaction
   ) {}
 
   /**
@@ -27,6 +29,7 @@ export class OrderService {
         user: req?.user?.id,
         totalPrice: req?.product?.totalPrice
       };
+      await this.dbTransaction.start()
       const order = await this.orderRepository.save(payload);
       for (const item of body?.products) {
         const payload = {
@@ -38,12 +41,14 @@ export class OrderService {
         const newQuantity = req?.product?.remainingQuantity?.find((e) => e?.productId == item?.productId)
         await this.productService.updateProduct({quantity: newQuantity?.remainingQuantity}, item?.productId, "")
       }
+      await this.dbTransaction.commitTransaction()
       return {
         status: true,
         data: {},
         message: 'Order placed successfully',
       };
     } catch (error) {
+      await this.dbTransaction.rollbackTransaction()
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
@@ -54,6 +59,8 @@ export class OrderService {
           cause: error,
         },
       );
+    } finally {
+      await this.dbTransaction.release()
     }
   }
   /**

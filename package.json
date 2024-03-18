@@ -43,7 +43,8 @@
     "reflect-metadata": "^0.1.13",
     "rps-random-password-generator": "^2.0.7",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "typeorm-transactional-cls-hooked": "^0.1.21"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

@@ -6,11 +6,12 @@ import { Order } from 'src/models/order.entity';
 import { OrderProduct } from 'src/models/order.product.entity';
 import { ProductModule } from '../products/product.module';
 import { Product } from 'src/models/product.entity';
+import { DbTransaction } from "../../config/transaction";
 
 @Module({
   imports: [TypeOrmModule.forFeature([Order, OrderProduct, Product]), ProductModule],
   controllers: [OrderController],
-  providers: [OrderService],
+  providers: [OrderService, DbTransaction],
   exports: [OrderService]
 })
 export class OrderModule {}
