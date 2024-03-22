@@ -41,7 +41,7 @@ export class OrderController {
       );
     }
   }
-  @Post('details')
+  @Get('details')
   @Roles([UserRoles.USER])
   @UseGuards(RolesGuard, middlewares.ProductQuantityCheck)
   @HttpCode(201)
