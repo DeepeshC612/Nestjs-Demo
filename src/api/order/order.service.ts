@@ -80,7 +80,7 @@ export class OrderService {
       return {
         status: true,
         data: { product: req?.product?.result, subTotal: subTotal },
-        message: 'Order placed successfully',
+        message: 'Order details fetch successfully',
       };
     } catch (error) {
       throw new HttpException(
