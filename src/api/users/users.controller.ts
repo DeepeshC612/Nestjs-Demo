@@ -80,10 +80,11 @@ export class UserController {
   @Get('')
   @ApiBearerAuth()
   @UseGuards(AuthGuard)
+  @Roles([UserRoles.ADMIN])
   @HttpCode(200)
-  async getUser(@Query('email') email: string) {
+  async getUser() {
     try {
-      return await this.userService.getUser(email);
+      return await this.userService.getUserList();
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

@@ -348,7 +348,7 @@ export class UserService {
   async getUser(email: string): Promise<User> {
     try {
       const user: User = await this.userRepository.findOne({
-        where: { email: email },
+        where: { email: email }
       });
       if (!user) {
         throw new HttpException(
@@ -360,6 +360,36 @@ export class UserService {
         );
       }
       return user;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Internal server error',
+        },
+        HttpStatus.BAD_REQUEST,
+        {
+          cause: error,
+        },
+      );
+    }
+  }
+  /**
+   * Get user details
+   * @returns
+   */
+  async getUserList(): Promise<object> {
+    try {
+      const user: User[] = await this.userRepository.find({});
+      if (!user) {
+        throw new HttpException(
+          {
+            status: false,
+            error: 'Users not found',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      return { status: true, data: user, message: 'User list.'};
     } catch (error) {
       throw new HttpException(
         {
