@@ -41,13 +41,13 @@ export class OrderController {
       );
     }
   }
-  @Get('details')
+  @Post('details')
   @Roles([UserRoles.USER])
   @UseGuards(RolesGuard, middlewares.ProductQuantityCheck)
   @HttpCode(201)
-  async orderDetails(@Req() req: Request) {
+  async orderDetails(@Body() body: PlaceOrderDto, @Req() req: Request) {
     try {
-      return await this.orderServices.getOrderDetails(req);
+      return await this.orderServices.getOrderDetails(body, req);
     } catch (error) {
       throw new HttpException(
         error?.cause?.response ?? error?.response,

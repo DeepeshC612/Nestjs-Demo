@@ -74,7 +74,7 @@ export class OrderService {
    * @req request
    * @returns
    */
-  async getOrderDetails(req: any): Promise<object> {
+  async getOrderDetails(body: any, req: any): Promise<object> {
     try {
       const subTotal = req?.product?.totalPrice;
       return {
