@@ -44,10 +44,12 @@ export class ProductQuantityCheck implements CanActivate {
         remainingQuantity: +e?.remainingQuantity,
       });
       if (e?.outOfStock) {
+        totalPrice -= +e?.totalPrice
         outOfStock = true;
       }
     });
     request.product = {
+      result: result,
       totalPrice: totalPrice,
       remainingQuantity: remainingQuantity,
     };
@@ -55,7 +57,7 @@ export class ProductQuantityCheck implements CanActivate {
       throw new HttpException(
         {
           status: HttpStatus.OK,
-          data: result,
+          data: { product: result, subTotal: totalPrice },
           message: 'Product quantity is out of stock',
         },
         HttpStatus.OK,

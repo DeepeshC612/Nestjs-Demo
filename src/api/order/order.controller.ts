@@ -41,4 +41,18 @@ export class OrderController {
       );
     }
   }
+  @Post('details')
+  @Roles([UserRoles.USER])
+  @UseGuards(RolesGuard, middlewares.ProductQuantityCheck)
+  @HttpCode(201)
+  async orderDetails(@Req() req: Request) {
+    try {
+      return await this.orderServices.getOrderDetails(req);
+    } catch (error) {
+      throw new HttpException(
+        error?.cause?.response ?? error?.response,
+        error?.cause?.status ?? error?.response?.status,
+      );
+    }
+  }
 }
