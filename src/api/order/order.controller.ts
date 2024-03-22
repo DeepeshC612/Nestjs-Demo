@@ -35,6 +35,7 @@ export class OrderController {
     try {
       return await this.orderServices.placeOrder(body, req);
     } catch (error) {
+      console.log(error);
       throw new HttpException(
         error?.cause?.response ?? error?.response,
         error?.cause?.status ?? error?.response?.status,

@@ -10,6 +10,16 @@ export const productSelect = [
   'user.email AS userEmail',
 ];
 
+export const orderSelect = [
+  'product.id AS id',
+  'product.productName AS productName',
+  'product.price AS price',
+  'product.image AS image',
+  'product.description AS description',
+  'product.quantity AS quantity',
+  'product.userId AS userId',
+];
+
 export const cartSelect = [
   'cart.id AS id',
   'cart.quantity AS quantity',
